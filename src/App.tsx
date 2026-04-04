@@ -3,10 +3,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
+import { useAdaptiveQuality } from './lib/useAdaptiveQuality'
 import { TopBar } from './components/ui/TopBar'
 import { TimeSlider } from './components/ui/TimeSlider'
 import { DataPanel } from './components/ui/DataPanel'
 import { APODCard } from './components/ui/APODCard'
+import { LoadingScreen } from './components/ui/LoadingScreen'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +21,7 @@ const queryClient = new QueryClient({
 
 export default function App() {
   useTimeLoop()
+  useAdaptiveQuality()
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,6 +45,7 @@ export default function App() {
         <TimeSlider />
         <DataPanel />
         <APODCard />
+        <LoadingScreen />
       </div>
     </QueryClientProvider>
   )
