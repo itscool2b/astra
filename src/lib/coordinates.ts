@@ -1,8 +1,8 @@
 import * as THREE from 'three'
-import { OrbitalElements } from '../data/types'
+import type { OrbitalElements } from '../data/types'
 import { computePosition } from './orbital'
-import { auToScene, radiusToScene } from './scales'
-import { ScaleMode } from '../store/useStore'
+import { auToScene } from './scales'
+import type { ScaleMode } from '../store/useStore'
 
 /**
  * Get a Three.js Vector3 position for a body at a given time.

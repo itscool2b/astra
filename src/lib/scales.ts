@@ -1,4 +1,4 @@
-import { ScaleMode } from '../store/useStore'
+import type { ScaleMode } from '../store/useStore'
 
 // 1 AU in scene units (Three.js units)
 // In compressed mode, we use a log scale so everything fits on screen

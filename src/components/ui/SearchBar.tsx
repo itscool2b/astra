@@ -3,8 +3,8 @@ import Fuse from 'fuse.js'
 import { PLANETS } from '../../data/planets'
 import { DWARF_PLANETS } from '../../data/dwarfPlanets'
 import { MOONS } from '../../data/moons'
-import { useStore, CelestialTarget } from '../../store/useStore'
-import { SearchableObject } from '../../data/types'
+import { useStore, type CelestialTarget } from '../../store/useStore'
+import type { SearchableObject } from '../../data/types'
 
 const allObjects: SearchableObject[] = [
   { id: 'sun', name: 'Sun', type: 'star' },

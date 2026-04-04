@@ -14,7 +14,7 @@ interface OrbitLineProps {
 export function OrbitLine({ orbit, color, opacity = 0.2 }: OrbitLineProps) {
   const scaleMode = useStore((s) => s.scaleMode)
 
-  const lineGeometry = useMemo(() => {
+  const lineObj = useMemo(() => {
     const orbitPoints = computeOrbitPath(orbit, 256)
     const points = orbitPoints.map(
       ([x, y, z]) =>
@@ -24,17 +24,15 @@ export function OrbitLine({ orbit, color, opacity = 0.2 }: OrbitLineProps) {
           auToScene(y, scaleMode)  // ecliptic Y -> scene Z
         )
     )
-    return new THREE.BufferGeometry().setFromPoints(points)
-  }, [orbit, scaleMode])
+    const geometry = new THREE.BufferGeometry().setFromPoints(points)
+    const material = new THREE.LineBasicMaterial({
+      color,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+    })
+    return new THREE.Line(geometry, material)
+  }, [orbit, scaleMode, color, opacity])
 
-  return (
-    <line geometry={lineGeometry}>
-      <lineBasicMaterial
-        color={color}
-        transparent
-        opacity={opacity}
-        depthWrite={false}
-      />
-    </line>
-  )
+  return <primitive object={lineObj} />
 }

@@ -1,6 +1,6 @@
 import { PLANET_MAP } from '../../../data/planets'
 import { MOONS_BY_PARENT } from '../../../data/moons'
-import { useStore, CelestialTarget } from '../../../store/useStore'
+import { useStore, type CelestialTarget } from '../../../store/useStore'
 
 interface StatProps {
   label: string

@@ -1,9 +1,7 @@
-import { OrbitalElements } from '../data/types'
+import type { OrbitalElements } from '../data/types'
 
 const DEG_TO_RAD = Math.PI / 180
 const TWO_PI = 2 * Math.PI
-const J2000 = 2451545.0 // Julian date for J2000 epoch
-
 /**
  * Convert a Date to Julian Date
  */

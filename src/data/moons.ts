@@ -1,4 +1,4 @@
-import { MoonData } from './types'
+import type { MoonData } from './types'
 
 // Orbital elements for moons are relative to parent, with semiMajorAxis in AU
 // For moons, we use simplified circular-ish orbits since the visual difference is negligible

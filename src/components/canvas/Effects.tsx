@@ -28,9 +28,39 @@ export function Effects() {
     )
   }
 
+  if (quality === 'high') {
+    return (
+      <EffectComposer multisampling={0}>
+        <Bloom
+          intensity={1.2}
+          luminanceThreshold={0.4}
+          luminanceSmoothing={0.6}
+          mipmapBlur
+          radius={0.8}
+        />
+        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        <ChromaticAberration
+          offset={new THREE.Vector2(0.0008, 0.0008)}
+          radialModulation
+          modulationOffset={0.5}
+          blendFunction={BlendFunction.NORMAL}
+        />
+        <Noise
+          premultiply
+          blendFunction={BlendFunction.SOFT_LIGHT}
+          opacity={0.15}
+        />
+        <Vignette
+          offset={0.3}
+          darkness={0.6}
+          blendFunction={BlendFunction.NORMAL}
+        />
+      </EffectComposer>
+    )
+  }
+
   return (
     <EffectComposer multisampling={0}>
-      {/* Bloom — aggressive on sun, subtle elsewhere */}
       <Bloom
         intensity={1.2}
         luminanceThreshold={0.4}
@@ -38,30 +68,7 @@ export function Effects() {
         mipmapBlur
         radius={0.8}
       />
-
-      {/* ACES Filmic tone mapping — cinematic color science */}
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-
-      {/* Chromatic aberration — subtle edge-of-lens effect */}
-      {quality === 'high' && (
-        <ChromaticAberration
-          offset={new THREE.Vector2(0.0008, 0.0008)}
-          radialModulation
-          modulationOffset={0.5}
-          blendFunction={BlendFunction.NORMAL}
-        />
-      )}
-
-      {/* Film grain — barely perceptible */}
-      {quality === 'high' && (
-        <Noise
-          premultiply
-          blendFunction={BlendFunction.SOFT_LIGHT}
-          opacity={0.15}
-        />
-      )}
-
-      {/* Vignette — focus the eye */}
       <Vignette
         offset={0.3}
         darkness={0.6}
