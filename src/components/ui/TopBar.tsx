@@ -1,7 +1,11 @@
 import { SearchBar } from './SearchBar'
 import { ScaleToggle } from './ScaleToggle'
 
-export function TopBar() {
+interface TopBarProps {
+  onOpenAbout: () => void
+}
+
+export function TopBar({ onOpenAbout }: TopBarProps) {
   return (
     <div
       style={{
@@ -25,7 +29,10 @@ export function TopBar() {
           color: '#fff',
           pointerEvents: 'auto',
           userSelect: 'none',
+          cursor: 'pointer',
         }}
+        onClick={onOpenAbout}
+        title="About ASTRA"
       >
         ASTRA
       </div>
@@ -34,6 +41,30 @@ export function TopBar() {
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center', pointerEvents: 'auto' }}>
         <ScaleToggle />
+        <button
+          onClick={onOpenAbout}
+          style={{
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8,
+            padding: '6px 12px',
+            color: 'rgba(255,255,255,0.6)',
+            fontSize: 11,
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
+            e.currentTarget.style.color = 'rgba(255,255,255,0.9)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+            e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+          }}
+        >
+          About
+        </button>
       </div>
     </div>
   )

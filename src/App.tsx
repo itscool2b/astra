@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Suspense } from 'react'
+import { Suspense, useState } from 'react'
 import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
 import { useAdaptiveQuality } from './lib/useAdaptiveQuality'
@@ -10,6 +10,7 @@ import { DataPanel } from './components/ui/DataPanel'
 import { APODCard } from './components/ui/APODCard'
 import { SpaceHUD } from './components/ui/SpaceHUD'
 import { LoadingScreen } from './components/ui/LoadingScreen'
+import { AboutPage } from './components/ui/AboutPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,6 +24,7 @@ const queryClient = new QueryClient({
 export default function App() {
   useTimeLoop()
   useAdaptiveQuality()
+  const [aboutOpen, setAboutOpen] = useState(false)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -42,12 +44,13 @@ export default function App() {
             <Scene />
           </Suspense>
         </Canvas>
-        <TopBar />
+        <TopBar onOpenAbout={() => setAboutOpen(true)} />
         <TimeSlider />
         <DataPanel />
         <APODCard />
         <SpaceHUD />
         <LoadingScreen />
+        <AboutPage open={aboutOpen} onClose={() => setAboutOpen(false)} />
       </div>
     </QueryClientProvider>
   )
