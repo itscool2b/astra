@@ -1,27 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAPOD } from '../../api/hooks'
-import { useStore } from '../../store/useStore'
 
 export function APODCard() {
   const { data: apod, isLoading } = useAPOD()
   const [expanded, setExpanded] = useState(false)
-  const loadingComplete = useStore((s) => s.loadingComplete)
-  const autoExpandDone = useRef(false)
-
-  // Auto-expand for 5 seconds after loading screen dismisses
-  useEffect(() => {
-    if (loadingComplete && apod && !autoExpandDone.current) {
-      autoExpandDone.current = true
-      // Small delay so the loading screen transition finishes
-      const openTimer = setTimeout(() => setExpanded(true), 800)
-      const closeTimer = setTimeout(() => setExpanded(false), 5800)
-      return () => {
-        clearTimeout(openTimer)
-        clearTimeout(closeTimer)
-      }
-    }
-  }, [loadingComplete, apod])
 
   if (isLoading || !apod) return null
 

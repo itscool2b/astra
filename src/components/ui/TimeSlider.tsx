@@ -52,8 +52,15 @@ export function TimeSlider() {
             borderRadius: '50%',
             background: '#44cc88',
             boxShadow: '0 0 6px #44cc88',
+            animation: 'livePulse 2s ease-in-out infinite',
           }}
         />
+        <style>{`
+          @keyframes livePulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 6px #44cc88; }
+            50% { opacity: 0.4; box-shadow: 0 0 2px #44cc88; }
+          }
+        `}</style>
         <span style={{ color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>LIVE</span>
         <span style={{ margin: '0 4px', opacity: 0.3 }}>|</span>
         <span>{dateStr}</span>

@@ -44,26 +44,32 @@ export function TopBar({ onOpenAbout }: TopBarProps) {
         <button
           onClick={onOpenAbout}
           style={{
+            width: 28,
+            height: 28,
+            borderRadius: '50%',
             background: 'rgba(255,255,255,0.06)',
             border: '1px solid rgba(255,255,255,0.1)',
-            borderRadius: 8,
-            padding: '6px 12px',
-            color: 'rgba(255,255,255,0.6)',
-            fontSize: 11,
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: 13,
             fontWeight: 600,
             cursor: 'pointer',
             transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 0,
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(255,255,255,0.1)'
-            e.currentTarget.style.color = 'rgba(255,255,255,0.9)'
+            e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
+            e.currentTarget.style.color = '#fff'
           }}
           onMouseLeave={(e) => {
             e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-            e.currentTarget.style.color = 'rgba(255,255,255,0.6)'
+            e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
           }}
+          title="About ASTRA"
         >
-          About
+          ?
         </button>
       </div>
     </div>

@@ -111,7 +111,7 @@ export function SpaceHUD() {
             whiteSpace: 'nowrap',
             fontSize: 11,
             color: 'rgba(255,255,255,0.55)',
-            animation: `marquee ${Math.max(tickerItems.length * 5, 30)}s linear infinite`,
+            animation: `marquee ${Math.max(tickerItems.length * 8, 50)}s linear infinite`,
             paddingLeft: '100%',
           }}
         >
