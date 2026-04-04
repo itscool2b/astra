@@ -1,6 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from '../../store/useStore'
 import { PlanetPanel } from './panels/PlanetPanel'
+import { EarthPanel } from './panels/EarthPanel'
+import { MarsPanel } from './panels/MarsPanel'
+import { SunPanel } from './panels/SunPanel'
 
 export function DataPanel() {
   const selectedObject = useStore((s) => s.selectedObject)
@@ -73,12 +76,12 @@ export function DataPanel() {
           </div>
 
           {/* Panel content by type */}
-          {selectedObject.type === 'planet' && (
+          {selectedObject.type === 'planet' && selectedObject.id === 'earth' && <EarthPanel />}
+          {selectedObject.type === 'planet' && selectedObject.id === 'mars' && <MarsPanel />}
+          {selectedObject.type === 'planet' && !['earth', 'mars'].includes(selectedObject.id) && (
             <PlanetPanel id={selectedObject.id} />
           )}
-          {selectedObject.type === 'star' && (
-            <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Sun panel (coming soon)</div>
-          )}
+          {selectedObject.type === 'star' && <SunPanel />}
           {selectedObject.type === 'moon' && (
             <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Moon panel (coming soon)</div>
           )}
