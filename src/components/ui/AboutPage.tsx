@@ -289,33 +289,12 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
               </div>
             </Section>
 
-            {/* Time controls */}
-            <Section title="Time Controls">
+            {/* Live time */}
+            <Section title="Real-Time Positions">
               <p style={styles.paragraph}>
-                The bottom bar controls simulation time. Press <strong style={{ color: 'rgba(255,255,255,0.85)' }}>play</strong> to
-                watch planets orbit. Use <strong style={{ color: 'rgba(255,255,255,0.85)' }}>rewind/fast-forward</strong> to change
-                direction. Click the <strong style={{ color: 'rgba(255,255,255,0.85)' }}>speed label</strong> to cycle through:
-              </p>
-              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>
-                {['1x (real-time)', '1 day/sec', '1 month/sec', '1 year/sec'].map((s) => (
-                  <span
-                    key={s}
-                    style={{
-                      fontSize: 11,
-                      padding: '4px 12px',
-                      borderRadius: 12,
-                      background: 'rgba(74,144,217,0.1)',
-                      border: '1px solid rgba(74,144,217,0.2)',
-                      color: 'rgba(255,255,255,0.7)',
-                    }}
-                  >
-                    {s}
-                  </span>
-                ))}
-              </div>
-              <p style={{ ...styles.paragraph, marginTop: 12 }}>
-                Drag the scrub bar to jump to any date between 1900 and 2100. All orbital positions
-                update instantly.
+                All orbital positions are computed for the current date and time. The bottom bar
+                shows a live indicator with today's date. Planet positions update continuously
+                as the Earth rotates.
               </p>
             </Section>
 
