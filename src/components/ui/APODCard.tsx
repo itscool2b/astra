@@ -1,10 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useAPOD } from '../../api/hooks'
+import { useStore } from '../../store/useStore'
 
 export function APODCard() {
   const { data: apod, isLoading } = useAPOD()
   const [expanded, setExpanded] = useState(false)
+  const loadingComplete = useStore((s) => s.loadingComplete)
+  const autoExpandDone = useRef(false)
+
+  // Auto-expand for 5 seconds after loading screen dismisses
+  useEffect(() => {
+    if (loadingComplete && apod && !autoExpandDone.current) {
+      autoExpandDone.current = true
+      // Small delay so the loading screen transition finishes
+      const openTimer = setTimeout(() => setExpanded(true), 800)
+      const closeTimer = setTimeout(() => setExpanded(false), 5800)
+      return () => {
+        clearTimeout(openTimer)
+        clearTimeout(closeTimer)
+      }
+    }
+  }, [loadingComplete, apod])
 
   if (isLoading || !apod) return null
 
@@ -15,19 +32,30 @@ export function APODCard() {
         onClick={() => setExpanded(true)}
         style={{
           position: 'absolute',
-          bottom: 80,
+          bottom: 120,
           left: 24,
           background: 'rgba(255,255,255,0.05)',
           backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: 12,
-          padding: 10,
-          width: 220,
+          borderRadius: 14,
+          padding: 12,
+          width: 280,
           cursor: 'pointer',
           zIndex: 10,
           pointerEvents: 'auto',
         }}
-        whileHover={{ scale: 1.02, borderColor: 'rgba(255,255,255,0.15)' }}
+        animate={{
+          borderColor: [
+            'rgba(74,144,217,0.15)',
+            'rgba(74,144,217,0.35)',
+            'rgba(74,144,217,0.15)',
+          ],
+          borderWidth: '1px',
+          borderStyle: 'solid',
+        }}
+        transition={{
+          borderColor: { duration: 2.5, repeat: Infinity, ease: 'easeInOut' },
+        }}
+        whileHover={{ scale: 1.02, borderColor: 'rgba(74,144,217,0.5)' }}
       >
         <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
           Photo of the Day
@@ -36,10 +64,10 @@ export function APODCard() {
           <img
             src={apod.url}
             alt={apod.title}
-            style={{ width: '100%', height: 70, objectFit: 'cover', borderRadius: 6, marginBottom: 6 }}
+            style={{ width: '100%', height: 120, objectFit: 'cover', borderRadius: 8, marginBottom: 8 }}
           />
         )}
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.8)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontWeight: 500 }}>
           {apod.title}
         </div>
       </motion.div>

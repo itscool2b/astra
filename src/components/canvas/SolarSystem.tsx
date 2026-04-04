@@ -3,6 +3,7 @@ import { DWARF_PLANETS } from '../../data/dwarfPlanets'
 import { Planet } from './Planet'
 import { DwarfPlanet } from './DwarfPlanet'
 import { AsteroidBelt } from './AsteroidBelt'
+import { NEOAsteroids } from './NEOAsteroids'
 
 export function SolarSystem() {
   return (
@@ -14,6 +15,7 @@ export function SolarSystem() {
         <DwarfPlanet key={dp.id} data={dp} />
       ))}
       <AsteroidBelt />
+      <NEOAsteroids />
     </group>
   )
 }

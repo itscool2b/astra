@@ -8,6 +8,7 @@ import { TopBar } from './components/ui/TopBar'
 import { TimeSlider } from './components/ui/TimeSlider'
 import { DataPanel } from './components/ui/DataPanel'
 import { APODCard } from './components/ui/APODCard'
+import { SpaceHUD } from './components/ui/SpaceHUD'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 
 const queryClient = new QueryClient({
@@ -45,6 +46,7 @@ export default function App() {
         <TimeSlider />
         <DataPanel />
         <APODCard />
+        <SpaceHUD />
         <LoadingScreen />
       </div>
     </QueryClientProvider>

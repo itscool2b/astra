@@ -15,6 +15,10 @@ dist
 .vercel
 dist-ssr
 
+# Planet textures (large binary files)
+public/textures/*.jpg
+public/textures/*.png
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

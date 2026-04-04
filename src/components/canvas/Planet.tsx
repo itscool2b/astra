@@ -9,9 +9,24 @@ import { auToScene, radiusToScene } from '../../lib/scales'
 import { OrbitLine } from './OrbitLine'
 import { Atmosphere } from './Atmosphere'
 import { Rings } from './Rings'
+import { EarthMarkers } from './EarthMarkers'
 import { MOONS_BY_PARENT } from '../../data/moons'
 import { Moon } from './Moon'
 import { bodyPositions } from '../../lib/bodyPositions'
+
+const textureLoader = new THREE.TextureLoader()
+
+function useTextureAsync(path: string | undefined): THREE.Texture | null {
+  return useMemo(() => {
+    if (!path) return null
+    try {
+      return textureLoader.load(`/textures/${path}`)
+    } catch {
+      return null
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path])
+}
 
 interface PlanetProps {
   data: PlanetData
@@ -19,6 +34,7 @@ interface PlanetProps {
 
 export function Planet({ data }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null)
+  const cloudRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
   const positionRef = useRef(new THREE.Vector3())
   const [hovered, setHovered] = useState(false)
@@ -32,6 +48,12 @@ export function Planet({ data }: PlanetProps) {
 
   const radius = radiusToScene(data.physical.radius, scaleMode)
   const isSelected = selectedObject?.id === data.id
+
+  // Load textures
+  const albedoTex = useTextureAsync(data.textureSet.albedo)
+  const normalTex = useTextureAsync(data.textureSet.normal)
+  const cloudsTex = useTextureAsync(data.textureSet.clouds)
+  const nightTex = useTextureAsync(data.textureSet.night)
 
   const target: CelestialTarget = useMemo(
     () => ({ id: data.id, name: data.name, type: 'planet' }),
@@ -61,6 +83,11 @@ export function Planet({ data }: PlanetProps) {
       const sign = data.physical.rotationPeriod < 0 ? -1 : 1
       meshRef.current.rotation.y = rotAngle * sign
     }
+
+    // Rotate Earth's cloud layer slightly faster for visual effect
+    if (cloudRef.current && meshRef.current) {
+      cloudRef.current.rotation.y = meshRef.current.rotation.y * 1.03
+    }
   })
 
   const handleClick = useCallback(
@@ -88,6 +115,9 @@ export function Planet({ data }: PlanetProps) {
     document.body.style.cursor = 'auto'
   }, [setHoveredObject])
 
+  // Determine material color: white if texture loaded, fallback color otherwise
+  const materialColor = albedoTex ? '#ffffff' : data.color
+
   return (
     <>
       <OrbitLine orbit={data.orbit} color={data.color} />
@@ -102,11 +132,32 @@ export function Planet({ data }: PlanetProps) {
         >
           <sphereGeometry args={[radius, 64, 64]} />
           <meshStandardMaterial
-            color={data.color}
+            color={materialColor}
+            map={albedoTex}
+            normalMap={normalTex}
+            emissiveMap={nightTex}
+            emissive={nightTex ? '#ffffff' : '#000000'}
+            emissiveIntensity={nightTex ? 0.6 : 0}
             roughness={0.8}
             metalness={0.1}
           />
         </mesh>
+
+        {/* Earth cloud layer */}
+        {data.id === 'earth' && cloudsTex && (
+          <mesh
+            ref={cloudRef}
+            rotation={[data.physical.axialTilt * (Math.PI / 180), 0, 0]}
+          >
+            <sphereGeometry args={[radius * 1.01, 64, 64]} />
+            <meshStandardMaterial
+              map={cloudsTex}
+              transparent
+              opacity={0.35}
+              depthWrite={false}
+            />
+          </mesh>
+        )}
 
         {/* Atmosphere */}
         {data.atmosphere && (
@@ -148,6 +199,9 @@ export function Planet({ data }: PlanetProps) {
             />
           </mesh>
         )}
+
+        {/* Earth event markers */}
+        {data.id === 'earth' && <EarthMarkers radius={radius} />}
 
         {/* Name label */}
         <Html
