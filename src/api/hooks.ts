@@ -150,26 +150,28 @@ export function useSpacecraftPosition(horizonsId: string) {
       const yMatch = posLine.match(/Y\s*=\s*([-\d.E+]+)/i)
       const zMatch = posLine.match(/Z\s*=\s*([-\d.E+]+)/i)
       if (!xMatch || !yMatch || !zMatch) throw new Error('Could not parse position')
-      // Parse velocity line: "VX= ... VY= ... VZ= ..."
-      const velLine = dataLines[2].trim()
-      const vxMatch = velLine.match(/VX\s*=\s*([-\d.E+]+)/i)
-      const vyMatch = velLine.match(/VY\s*=\s*([-\d.E+]+)/i)
-      const vzMatch = velLine.match(/VZ\s*=\s*([-\d.E+]+)/i)
-      const vx = vxMatch ? parseFloat(vxMatch[1]) : 0
-      const vy = vyMatch ? parseFloat(vyMatch[1]) : 0
-      const vz = vzMatch ? parseFloat(vzMatch[1]) : 0
-      const speed = Math.sqrt(vx * vx + vy * vy + vz * vz)
+      // Parse velocity line with try/catch for robustness
+      let vx = 0, vy = 0, vz = 0, speed = 0
+      try {
+        const velLine = dataLines[2].trim()
+        const vxMatch = velLine.match(/VX\s*=\s*([-\d.E+]+)/i)
+        const vyMatch = velLine.match(/VY\s*=\s*([-\d.E+]+)/i)
+        const vzMatch = velLine.match(/VZ\s*=\s*([-\d.E+]+)/i)
+        vx = vxMatch ? parseFloat(vxMatch[1]) : 0
+        vy = vyMatch ? parseFloat(vyMatch[1]) : 0
+        vz = vzMatch ? parseFloat(vzMatch[1]) : 0
+        if (isNaN(vx) || isNaN(vy) || isNaN(vz)) { vx = 0; vy = 0; vz = 0 }
+        speed = Math.sqrt(vx * vx + vy * vy + vz * vz)
+      } catch {
+        // velocity parsing failed, keep speed=0
+      }
       // Horizons outputs in km, convert to AU
       const kmToAu = 1 / 1.496e8
-      return {
-        x: parseFloat(xMatch[1]) * kmToAu,
-        y: parseFloat(yMatch[1]) * kmToAu,
-        z: parseFloat(zMatch[1]) * kmToAu,
-        vx,
-        vy,
-        vz,
-        speed,
-      }
+      const x = parseFloat(xMatch[1]) * kmToAu
+      const y = parseFloat(yMatch[1]) * kmToAu
+      const z = parseFloat(zMatch[1]) * kmToAu
+      if (isNaN(x) || isNaN(y) || isNaN(z)) throw new Error('Parsed position contains NaN')
+      return { x, y, z, vx, vy, vz, speed }
     },
     staleTime: 24 * 60 * 60 * 1000,
   })
@@ -235,48 +237,52 @@ export function useDSNStatus() {
     queryFn: async () => {
       const res = await fetch(`${window.location.origin}${API_BASE}/dsn`)
       const text = await res.text()
-      const parser = new DOMParser()
-      const xml = parser.parseFromString(text, 'text/xml')
-      const dishes = xml.querySelectorAll('dish')
-      const result: DSNDish[] = []
-      dishes.forEach(dish => {
-        const name = dish.getAttribute('name') || ''
-        const friendlyName = dish.getAttribute('friendlyName') || name
-        const azStr = dish.getAttribute('azimuthAngle')
-        const elStr = dish.getAttribute('elevationAngle')
-        const targets: string[] = []
-        dish.querySelectorAll('target').forEach(t => {
-          const tName = t.getAttribute('name')
-          if (tName && tName !== '' && tName !== 'NONE') targets.push(tName)
-        })
-        // Parse signals
-        const signals: DSNSignal[] = []
-        dish.querySelectorAll('downSignal').forEach(sig => {
-          const rateStr = sig.getAttribute('dataRate')
-          signals.push({
-            direction: 'down',
-            dataRate: rateStr ? parseFloat(rateStr) : null,
+      try {
+        const parser = new DOMParser()
+        const xml = parser.parseFromString(text, 'text/xml')
+        const dishes = xml.querySelectorAll('dish')
+        const result: DSNDish[] = []
+        dishes.forEach(dish => {
+          const name = dish.getAttribute('name') || ''
+          const friendlyName = dish.getAttribute('friendlyName') || name
+          const azStr = dish.getAttribute('azimuthAngle')
+          const elStr = dish.getAttribute('elevationAngle')
+          const targets: string[] = []
+          dish.querySelectorAll('target').forEach(t => {
+            const tName = t.getAttribute('name')
+            if (tName && tName !== '' && tName !== 'NONE') targets.push(tName)
           })
-        })
-        dish.querySelectorAll('upSignal').forEach(sig => {
-          const rateStr = sig.getAttribute('dataRate')
-          signals.push({
-            direction: 'up',
-            dataRate: rateStr ? parseFloat(rateStr) : null,
+          // Parse signals
+          const signals: DSNSignal[] = []
+          dish.querySelectorAll('downSignal').forEach(sig => {
+            const rateStr = sig.getAttribute('dataRate')
+            signals.push({
+              direction: 'down',
+              dataRate: rateStr ? parseFloat(rateStr) : null,
+            })
           })
-        })
-        if (targets.length > 0) {
-          result.push({
-            dish: friendlyName || name,
-            targets,
-            complex: detectComplex(name),
-            azimuthAngle: azStr ? parseFloat(azStr) : null,
-            elevationAngle: elStr ? parseFloat(elStr) : null,
-            signals,
+          dish.querySelectorAll('upSignal').forEach(sig => {
+            const rateStr = sig.getAttribute('dataRate')
+            signals.push({
+              direction: 'up',
+              dataRate: rateStr ? parseFloat(rateStr) : null,
+            })
           })
-        }
-      })
-      return result
+          if (targets.length > 0) {
+            result.push({
+              dish: friendlyName || name,
+              targets,
+              complex: detectComplex(name),
+              azimuthAngle: azStr ? parseFloat(azStr) : null,
+              elevationAngle: elStr ? parseFloat(elStr) : null,
+              signals,
+            })
+          }
+        })
+        return result
+      } catch {
+        return [] as DSNDish[]
+      }
     },
     refetchInterval: 30000,
     staleTime: 15000,

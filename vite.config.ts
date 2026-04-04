@@ -108,7 +108,7 @@ function nasaDevProxy(): Plugin {
             }
 
             case 'iss': {
-              targetUrl = 'http://api.open-notify.org/iss-now.json'
+              targetUrl = 'https://api.open-notify.org/iss-now.json'
               break
             }
 

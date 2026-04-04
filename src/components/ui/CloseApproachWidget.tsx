@@ -12,12 +12,13 @@ const DIAMETER = 11
 const FULLNAME = 13
 
 export function CloseApproachWidget() {
-  const { data, isLoading } = useCloseApproaches()
+  const { data, isLoading, isError } = useCloseApproaches()
   const [collapsed, setCollapsed] = useState(true)
 
   const approaches = useMemo(() => {
     if (!data?.data) return []
     return data.data
+      .filter((row) => row.length >= 14)
       .map((row) => {
         const distLD = parseFloat(row[DIST]) * AU_TO_LD
         return {
@@ -31,6 +32,28 @@ export function CloseApproachWidget() {
       .sort((a, b) => a.distLD - b.distLD)
       .slice(0, 5)
   }, [data])
+
+  if (isError) {
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 270,
+          left: 24,
+          zIndex: 10,
+          background: 'rgba(8,8,24,0.88)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 10,
+          padding: '8px 12px',
+          fontSize: 10,
+          color: 'rgba(255,255,255,0.4)',
+        }}
+      >
+        Data unavailable
+      </div>
+    )
+  }
 
   if (isLoading || !data || approaches.length === 0) return null
 

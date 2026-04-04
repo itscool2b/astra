@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from '../../store/useStore'
 
@@ -6,9 +7,10 @@ export function LoadingScreen() {
   const setLoadingComplete = useStore((s) => s.setLoadingComplete)
 
   // Auto-dismiss after 3 seconds (textures load in background)
-  if (!loadingComplete) {
-    setTimeout(() => setLoadingComplete(true), 3000)
-  }
+  useEffect(() => {
+    const timer = setTimeout(() => setLoadingComplete(true), 3000)
+    return () => clearTimeout(timer)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <AnimatePresence>

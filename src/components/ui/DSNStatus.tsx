@@ -21,7 +21,7 @@ function formatDataRate(bps: number): string {
 const COMPLEX_ORDER = ['Goldstone', 'Canberra', 'Madrid', 'Unknown']
 
 export function DSNStatus() {
-  const { data: dishes, isLoading } = useDSNStatus()
+  const { data: dishes, isLoading, isError } = useDSNStatus()
   const [collapsed, setCollapsed] = useState(true)
 
   const grouped = useMemo(() => {
@@ -33,6 +33,28 @@ export function DSNStatus() {
     }
     return map
   }, [dishes])
+
+  if (isError) {
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 110,
+          right: 16,
+          zIndex: 10,
+          background: 'rgba(8,8,24,0.88)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 10,
+          padding: '8px 12px',
+          fontSize: 10,
+          color: 'rgba(255,255,255,0.4)',
+        }}
+      >
+        DSN offline
+      </div>
+    )
+  }
 
   if (isLoading || !dishes || dishes.length === 0) return null
 
