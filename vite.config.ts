@@ -118,8 +118,7 @@ function nasaDevProxy(): Plugin {
             }
 
             case 'exoplanets': {
-              const query = "SELECT+pl_name,hostname,disc_year,discoverymethod,pl_orbper,pl_rade,pl_bmasse,pl_eqt,sy_dist,pl_orbsmax,st_spectype,st_teff+FROM+pscomppars+WHERE+default_flag=1&format=json"
-              targetUrl = `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=${query}`
+              targetUrl = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+pl_name,hostname,disc_year,discoverymethod,pl_orbper,pl_rade,pl_bmasse,pl_eqt,sy_dist,pl_orbsmax,st_spectype,st_teff+FROM+pscomppars+WHERE+disc_year+IS+NOT+NULL&format=json'
               break
             }
 
