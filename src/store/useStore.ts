@@ -44,6 +44,8 @@ interface AppState {
   setLoadingProgress: (p: number) => void
   loadingComplete: boolean
   setLoadingComplete: (v: boolean) => void
+  overlayOpen: boolean
+  setOverlayOpen: (v: boolean) => void
 }
 
 export const useStore = create<AppState>((set) => ({
@@ -78,4 +80,6 @@ export const useStore = create<AppState>((set) => ({
   setLoadingProgress: (p) => set({ loadingProgress: p }),
   loadingComplete: false,
   setLoadingComplete: (v) => set({ loadingComplete: v }),
+  overlayOpen: false,
+  setOverlayOpen: (v) => set({ overlayOpen: v }),
 }))

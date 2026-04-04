@@ -16,6 +16,7 @@ import { ExoplanetBrowser } from './components/ui/ExoplanetBrowser'
 import { DSNStatus } from './components/ui/DSNStatus'
 import { ComparisonView } from './components/ui/ComparisonView'
 import { useKeyboardNav } from './lib/useKeyboardNav'
+import { useStore } from './store/useStore'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,12 @@ export default function App() {
   const [exoplanetsOpen, setExoplanetsOpen] = useState(false)
   const [compareOpen, setCompareOpen] = useState(false)
   const [compareInitialId, setCompareInitialId] = useState<string | undefined>()
+  const setOverlayOpen = useStore((s) => s.setOverlayOpen)
+
+  // Track whether any full-screen overlay is open (hides 3D labels)
+  useEffect(() => {
+    setOverlayOpen(aboutOpen || exoplanetsOpen || compareOpen)
+  }, [aboutOpen, exoplanetsOpen, compareOpen, setOverlayOpen])
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -47,7 +54,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div style={{ width: '100%', height: '100%', position: 'relative' }}>
+      <div style={{ width: '100%', height: '100%', position: 'relative' }} className={aboutOpen || exoplanetsOpen || compareOpen ? 'overlay-active' : ''}>
         <Canvas
           gl={{
             antialias: false,
