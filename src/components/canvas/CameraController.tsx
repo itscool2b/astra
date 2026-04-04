@@ -38,8 +38,16 @@ export function CameraController() {
   useEffect(() => {
     if (!cameraTarget || !isFlyingTo) return
 
-    const targetPos = bodyPositions.get(cameraTarget.id) || new THREE.Vector3()
+    const targetPos = bodyPositions.get(cameraTarget.id)
+    if (!targetPos || (targetPos.x === 0 && targetPos.y === 0 && targetPos.z === 0 && cameraTarget.type !== 'star')) {
+      // Position not registered yet, skip
+      setIsFlyingTo(false)
+      return
+    }
+
     const targetRadius = bodyPositions.getRadius(cameraTarget.id)
+    // Orbit distance: larger for bigger objects, minimum 3 units so camera doesn't clip
+    const orbitDist = Math.max(targetRadius * 6, 3)
 
     const fs = flyState.current
     fs.active = true
@@ -48,17 +56,20 @@ export function CameraController() {
     fs.startTarget.copy(controlsRef.current?.target || new THREE.Vector3())
     fs.endTarget.copy(targetPos)
 
-    // End position: orbit the target at a good viewing distance
-    const dir = new THREE.Vector3().subVectors(camera.position, targetPos).normalize()
-    fs.endPos.copy(targetPos).add(dir.multiplyScalar(targetRadius * 4))
+    // End position: approach from a consistent angle (slightly above and to the side)
+    const dir = new THREE.Vector3().subVectors(camera.position, targetPos)
+    if (dir.length() < 0.01) dir.set(1, 0.5, 1) // avoid zero-length direction
+    dir.normalize()
+    fs.endPos.copy(targetPos).add(dir.multiplyScalar(orbitDist))
 
     // Control point: arc above for a swooping path
+    const travel = fs.startPos.distanceTo(fs.endPos)
     fs.controlPoint.lerpVectors(fs.startPos, fs.endPos, 0.5)
-    fs.controlPoint.y += Math.max(
-      fs.startPos.distanceTo(fs.endPos) * 0.3,
-      20
-    )
-  }, [cameraTarget, isFlyingTo, camera])
+    fs.controlPoint.y += Math.max(travel * 0.2, 5)
+
+    // Scale duration to travel distance (faster for short hops, slower for long ones)
+    fs.duration = Math.min(Math.max(travel * 0.02, 1.5), 3.5)
+  }, [cameraTarget, isFlyingTo, camera, setIsFlyingTo])
 
   useFrame((_, delta) => {
     const fs = flyState.current

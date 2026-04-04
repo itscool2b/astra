@@ -41,22 +41,22 @@ export function ISSPanel() {
         </p>
       </div>
 
-      {/* Live HD Stream */}
+      {/* Live Stream */}
       <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>
-          Live HD Camera
+          NASA Live
         </div>
         <div style={{ borderRadius: 8, overflow: 'hidden', background: 'rgba(0,0,0,0.3)' }}>
           <iframe
-            src="https://www.youtube.com/embed/xRPjKQtRXR8"
-            title="ISS Live HD Stream"
+            src="https://www.youtube.com/embed/21X5lGlDOfg?autoplay=0"
+            title="NASA Live Stream"
             style={{ width: '100%', height: 200, border: 'none', display: 'block' }}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         </div>
         <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>
-          NASA ISS HD Earth Viewing Experiment
+          NASA TV live broadcast. Switches between ISS views, mission coverage, and educational content.
         </div>
       </div>
 
