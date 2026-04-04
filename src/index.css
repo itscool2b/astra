@@ -26,3 +26,10 @@ html, body, #root {
   background: rgba(255, 255, 255, 0.15);
   border-radius: 2px;
 }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  body {
+    touch-action: none;
+  }
+}

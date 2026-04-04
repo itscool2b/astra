@@ -4,29 +4,41 @@ import { PlanetPanel } from './panels/PlanetPanel'
 import { EarthPanel } from './panels/EarthPanel'
 import { MarsPanel } from './panels/MarsPanel'
 import { SunPanel } from './panels/SunPanel'
+import { DwarfPlanetPanel } from './panels/DwarfPlanetPanel'
+import { MoonPanel } from './panels/MoonPanel'
 
 export function DataPanel() {
   const selectedObject = useStore((s) => s.selectedObject)
   const panelOpen = useStore((s) => s.panelOpen)
   const selectObject = useStore((s) => s.selectObject)
+  const isMobile = window.innerWidth <= 768
 
   return (
     <AnimatePresence>
       {panelOpen && selectedObject && (
         <motion.div
-          initial={{ x: 400, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: 400, opacity: 0 }}
+          initial={isMobile ? { y: '100%', opacity: 0 } : { x: 400, opacity: 0 }}
+          animate={isMobile ? { y: 0, opacity: 1 } : { x: 0, opacity: 1 }}
+          exit={isMobile ? { y: '100%', opacity: 0 } : { x: 400, opacity: 0 }}
           transition={{ type: 'spring', damping: 25, stiffness: 200 }}
           style={{
             position: 'absolute',
-            top: 0,
-            right: 0,
-            bottom: 0,
-            width: 380,
+            ...(isMobile ? {
+              bottom: 0,
+              left: 0,
+              right: 0,
+              maxHeight: '60vh',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: '16px 16px 0 0',
+            } : {
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: 380,
+              borderLeft: '1px solid rgba(255,255,255,0.06)',
+            }),
             background: 'rgba(8,8,24,0.92)',
             backdropFilter: 'blur(20px)',
-            borderLeft: '1px solid rgba(255,255,255,0.06)',
             overflowY: 'auto',
             zIndex: 20,
           }}
@@ -82,12 +94,8 @@ export function DataPanel() {
             <PlanetPanel id={selectedObject.id} />
           )}
           {selectedObject.type === 'star' && <SunPanel />}
-          {selectedObject.type === 'moon' && (
-            <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Moon panel (coming soon)</div>
-          )}
-          {selectedObject.type === 'dwarf-planet' && (
-            <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Dwarf planet panel (coming soon)</div>
-          )}
+          {selectedObject.type === 'moon' && <MoonPanel id={selectedObject.id} />}
+          {selectedObject.type === 'dwarf-planet' && <DwarfPlanetPanel id={selectedObject.id} />}
           {selectedObject.type === 'asteroid' && (
             <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Asteroid panel (coming soon)</div>
           )}
