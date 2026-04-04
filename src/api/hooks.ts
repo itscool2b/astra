@@ -143,3 +143,49 @@ export function useEONET() {
     select: (data) => data.events,
   })
 }
+
+// --- ISS Position ---
+export function useISSPosition() {
+  return useQuery({
+    queryKey: ['iss-position'],
+    queryFn: () => fetchApi<{ iss_position: { latitude: string; longitude: string }; timestamp: number }>('/iss'),
+    refetchInterval: 10000,
+    staleTime: 5000,
+  })
+}
+
+// --- DSN Status ---
+export interface DSNDish {
+  dish: string
+  targets: string[]
+  complex: string
+}
+
+export function useDSNStatus() {
+  return useQuery({
+    queryKey: ['dsn'],
+    queryFn: async () => {
+      const res = await fetch(`${window.location.origin}${API_BASE}/dsn`)
+      const text = await res.text()
+      const parser = new DOMParser()
+      const xml = parser.parseFromString(text, 'text/xml')
+      const dishes = xml.querySelectorAll('dish')
+      const result: DSNDish[] = []
+      dishes.forEach(dish => {
+        const name = dish.getAttribute('name') || ''
+        const friendlyName = dish.getAttribute('friendlyName') || name
+        const targets: string[] = []
+        dish.querySelectorAll('target').forEach(t => {
+          const tName = t.getAttribute('name')
+          if (tName && tName !== '' && tName !== 'NONE') targets.push(tName)
+        })
+        if (targets.length > 0) {
+          result.push({ dish: friendlyName || name, targets, complex: '' })
+        }
+      })
+      return result
+    },
+    refetchInterval: 30000,
+    staleTime: 15000,
+  })
+}

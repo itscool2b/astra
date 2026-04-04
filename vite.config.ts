@@ -102,6 +102,16 @@ function nasaDevProxy(): Plugin {
               break
             }
 
+            case 'iss': {
+              targetUrl = 'http://api.open-notify.org/iss-now.json'
+              break
+            }
+
+            case 'dsn': {
+              targetUrl = 'https://eyes.nasa.gov/dsn/data/dsn.xml'
+              break
+            }
+
             default:
               return next()
           }

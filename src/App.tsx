@@ -11,6 +11,7 @@ import { APODCard } from './components/ui/APODCard'
 import { SpaceHUD } from './components/ui/SpaceHUD'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 import { AboutPage } from './components/ui/AboutPage'
+import { DSNStatus } from './components/ui/DSNStatus'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -49,6 +50,7 @@ export default function App() {
         <DataPanel />
         <APODCard />
         <SpaceHUD />
+        <DSNStatus />
         <LoadingScreen />
         <AboutPage open={aboutOpen} onClose={() => setAboutOpen(false)} />
       </div>

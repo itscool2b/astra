@@ -10,6 +10,7 @@ import { OrbitLine } from './OrbitLine'
 import { Atmosphere } from './Atmosphere'
 import { Rings } from './Rings'
 import { EarthMarkers } from './EarthMarkers'
+import { ISS } from './ISS'
 import { MOONS_BY_PARENT } from '../../data/moons'
 import { Moon } from './Moon'
 import { bodyPositions } from '../../lib/bodyPositions'
@@ -211,6 +212,9 @@ export function Planet({ data }: PlanetProps) {
 
         {/* Earth event markers */}
         {data.id === 'earth' && <EarthMarkers radius={radius} />}
+
+        {/* ISS tracker */}
+        {data.id === 'earth' && <ISS radius={radius} />}
 
         {/* Name label */}
         <Html

@@ -1,11 +1,121 @@
+import { useState } from 'react'
 import { useDONKICMEs, useDONKIFlares } from '../../../api/hooks'
+
+const SDO_WAVELENGTHS = [
+  { key: '171', label: '171', url: 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0171.jpg', desc: 'AIA 171 - Corona (blue)' },
+  { key: '193', label: '193', url: 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0193.jpg', desc: 'AIA 193 - Corona (gold)' },
+  { key: '304', label: '304', url: 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_0304.jpg', desc: 'AIA 304 - Chromosphere (red)' },
+  { key: 'hmi', label: 'HMI', url: 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIIC.jpg', desc: 'HMI Intensitygram - Visible light' },
+  { key: 'mag', label: 'MAG', url: 'https://sdo.gsfc.nasa.gov/assets/img/latest/latest_1024_HMIB.jpg', desc: 'HMI Magnetogram - Magnetic field' },
+]
+
+const SOHO_IMAGES = [
+  { key: 'c2', label: 'LASCO C2', url: 'https://soho.nascom.nasa.gov/data/realtime/c2/1024/latest.jpg', desc: 'Inner corona' },
+  { key: 'c3', label: 'LASCO C3', url: 'https://soho.nascom.nasa.gov/data/realtime/c3/1024/latest.jpg', desc: 'Outer corona' },
+]
 
 export function SunPanel() {
   const { data: cmes } = useDONKICMEs()
   const { data: flares } = useDONKIFlares()
+  const [selectedWavelength, setSelectedWavelength] = useState('171')
+
+  const activeSDO = SDO_WAVELENGTHS.find(w => w.key === selectedWavelength) || SDO_WAVELENGTHS[0]
+  const cacheBust = `?t=${Math.floor(Date.now() / 60000)}`
 
   return (
     <div>
+      {/* Live Solar Imagery (SDO) */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>Live Solar Imagery</div>
+          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>Updated every 15 min</div>
+        </div>
+
+        {/* Large active image */}
+        <div style={{ borderRadius: 8, overflow: 'hidden', marginBottom: 10, background: 'rgba(0,0,0,0.3)' }}>
+          <img
+            src={`${activeSDO.url}${cacheBust}`}
+            alt={activeSDO.desc}
+            style={{ width: '100%', height: 200, objectFit: 'cover', display: 'block' }}
+          />
+        </div>
+        <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginBottom: 10 }}>
+          {activeSDO.desc}
+        </div>
+
+        {/* Wavelength selector chips */}
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {SDO_WAVELENGTHS.map(w => (
+            <button
+              key={w.key}
+              onClick={() => setSelectedWavelength(w.key)}
+              style={{
+                padding: '4px 10px',
+                borderRadius: 12,
+                border: selectedWavelength === w.key ? '1px solid #4a90d9' : '1px solid rgba(255,255,255,0.12)',
+                background: selectedWavelength === w.key ? 'rgba(74,144,217,0.15)' : 'rgba(255,255,255,0.04)',
+                color: selectedWavelength === w.key ? '#4a90d9' : 'rgba(255,255,255,0.55)',
+                fontSize: 11,
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}
+            >
+              {w.label}
+            </button>
+          ))}
+        </div>
+
+        {/* SDO thumbnails row */}
+        <div style={{ display: 'flex', gap: 6, marginTop: 10 }}>
+          {SDO_WAVELENGTHS.map(w => (
+            <div
+              key={w.key}
+              onClick={() => setSelectedWavelength(w.key)}
+              style={{
+                flex: 1,
+                cursor: 'pointer',
+                borderRadius: 6,
+                overflow: 'hidden',
+                border: selectedWavelength === w.key ? '2px solid #4a90d9' : '2px solid transparent',
+                opacity: selectedWavelength === w.key ? 1 : 0.6,
+                transition: 'all 0.2s',
+              }}
+            >
+              <img
+                src={`${w.url}${cacheBust}`}
+                alt={w.desc}
+                style={{ width: '100%', height: 48, objectFit: 'cover', display: 'block' }}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* SOHO Coronagraph */}
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 600 }}>SOHO Coronagraph</div>
+          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>Live coronagraph</div>
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {SOHO_IMAGES.map(img => (
+            <div key={img.key} style={{ flex: 1 }}>
+              <div style={{ borderRadius: 8, overflow: 'hidden', background: 'rgba(0,0,0,0.3)' }}>
+                <img
+                  src={`${img.url}${cacheBust}`}
+                  alt={img.desc}
+                  style={{ width: '100%', height: 160, objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 4, textAlign: 'center' }}>
+                {img.label} - {img.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Sun stats */}
       <div style={{ padding: '16px 20px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div>

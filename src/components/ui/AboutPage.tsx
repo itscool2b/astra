@@ -5,6 +5,37 @@ interface AboutPageProps {
   onClose: () => void
 }
 
+const LIVE_FEEDS = [
+  {
+    name: 'SDO',
+    fullName: 'Solar Dynamics Observatory',
+    description: 'Near-real-time solar surface in multiple wavelengths',
+    updates: 'Every 15 min',
+    where: 'Click the Sun to see live solar images in 5 wavelengths.',
+  },
+  {
+    name: 'ISS',
+    fullName: 'International Space Station Tracker',
+    description: 'International Space Station position and live camera',
+    updates: 'Every 10 sec',
+    where: 'Visible orbiting Earth when zoomed in. Click for live HD camera feed.',
+  },
+  {
+    name: 'DSN',
+    fullName: 'Deep Space Network',
+    description: 'Deep Space Network dish activity in real-time',
+    updates: 'Every 30 sec',
+    where: 'Collapsible widget in the bottom-right corner showing active dishes.',
+  },
+  {
+    name: 'SOHO',
+    fullName: 'Solar and Heliospheric Observatory',
+    description: 'Solar coronagraph showing coronal mass ejections',
+    updates: 'Every 30 min',
+    where: 'Click the Sun to see LASCO C2 and C3 coronagraph images.',
+  },
+]
+
 const DATA_SOURCES = [
   {
     name: 'APOD',
@@ -295,6 +326,56 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                 shows a live indicator with today's date. Planet positions update continuously
                 as the Earth rotates.
               </p>
+            </Section>
+
+            {/* Live Feeds */}
+            <Section title="Live Feeds">
+              <p style={styles.paragraph}>
+                ASTRA includes four real-time feeds providing continuous updates from space
+                assets around the solar system.
+              </p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
+                {LIVE_FEEDS.map((feed) => (
+                  <div
+                    key={feed.name}
+                    style={{
+                      background: 'rgba(255,255,255,0.02)',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: 10,
+                      padding: '16px 18px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
+                      <div>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: '#4a90d9' }}>
+                          {feed.name}
+                        </span>
+                        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginLeft: 8 }}>
+                          {feed.fullName}
+                        </span>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: 10,
+                          color: 'rgba(255,255,255,0.4)',
+                          background: 'rgba(255,255,255,0.05)',
+                          padding: '2px 8px',
+                          borderRadius: 8,
+                        }}
+                      >
+                        {feed.updates}
+                      </span>
+                    </div>
+                    <p style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(255,255,255,0.55)', marginBottom: 8 }}>
+                      {feed.description}
+                    </p>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>
+                      <strong style={{ color: 'rgba(255,255,255,0.5)' }}>Where to find it:</strong>{' '}
+                      {feed.where}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </Section>
 
             {/* Live data sources */}
