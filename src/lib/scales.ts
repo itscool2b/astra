@@ -21,7 +21,7 @@ export function auToScene(au: number, mode: ScaleMode): number {
   if (au === 0) return 0
   const sign = au < 0 ? -1 : 1
   const abs = Math.abs(au)
-  return sign * Math.log2(1 + abs * 8) * 12
+  return sign * Math.log2(1 + abs * 10) * 14
 }
 
 /**
@@ -52,7 +52,7 @@ export function sunRadiusToScene(mode: ScaleMode): number {
   if (mode === 'realistic') {
     return (SUN_RADIUS_KM / AU_KM) * AU_REALISTIC * 200
   }
-  return 3.5 // Fixed size in compressed mode
+  return 2.0 // Fixed size in compressed mode
 }
 
 /**
