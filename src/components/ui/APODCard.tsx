@@ -3,12 +3,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAPOD } from '../../api/hooks'
 
 export function APODCard() {
-  const { data: apod, isLoading, isError } = useAPOD()
+  const { data: apod, isLoading, isError, refetch } = useAPOD()
   const [expanded, setExpanded] = useState(false)
 
   if (isError) {
     return (
       <div
+        onClick={() => refetch()}
         style={{
           position: 'absolute',
           bottom: 120,
@@ -20,12 +21,13 @@ export function APODCard() {
           width: 280,
           zIndex: 10,
           border: '1px solid rgba(255,255,255,0.08)',
+          cursor: 'pointer',
         }}
       >
         <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
           Photo of the Day
         </div>
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Photo unavailable</div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Tap to retry</div>
       </div>
     )
   }

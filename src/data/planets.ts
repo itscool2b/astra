@@ -30,7 +30,7 @@ export const PLANETS: PlanetData[] = [
     hasRings: false,
     description: 'The smallest planet and closest to the Sun. Its surface is heavily cratered and resembles Earth\'s Moon.',
     color: '#b5a07a',
-    textureSet: { albedo: 'mercury_albedo.jpg', normal: 'mercury_normal.jpg' },
+    textureSet: { albedo: 'mercury_albedo.jpg' },
   },
   {
     id: 'venus',
@@ -109,8 +109,7 @@ export const PLANETS: PlanetData[] = [
     textureSet: {
       albedo: 'earth_daymap.jpg',
       normal: 'earth_normal.jpg',
-      specular: 'earth_specular.jpg',
-      clouds: 'earth_clouds.png',
+      clouds: 'earth_clouds.jpg',
       night: 'earth_nightmap.jpg',
     },
   },
@@ -151,7 +150,7 @@ export const PLANETS: PlanetData[] = [
     hasRings: false,
     description: 'The Red Planet, home to the tallest volcano (Olympus Mons) and the longest canyon (Valles Marineris) in the solar system.',
     color: '#c1440e',
-    textureSet: { albedo: 'mars_albedo.jpg', normal: 'mars_normal.jpg' },
+    textureSet: { albedo: 'mars_albedo.jpg' },
   },
   {
     id: 'jupiter',
