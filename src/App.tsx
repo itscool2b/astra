@@ -6,6 +6,7 @@ import { useTimeLoop } from './lib/useTimeLoop'
 import { TopBar } from './components/ui/TopBar'
 import { TimeSlider } from './components/ui/TimeSlider'
 import { DataPanel } from './components/ui/DataPanel'
+import { APODCard } from './components/ui/APODCard'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,6 +41,7 @@ export default function App() {
         <TopBar />
         <TimeSlider />
         <DataPanel />
+        <APODCard />
       </div>
     </QueryClientProvider>
   )
