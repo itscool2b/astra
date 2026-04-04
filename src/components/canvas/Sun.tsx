@@ -87,21 +87,21 @@ export function Sun() {
         <sphereGeometry args={[radius, 64, 64]} />
       </mesh>
 
-      {/* Corona glow — billboard that always faces camera */}
+      {/* Corona glow -billboard that always faces camera */}
       <Billboard>
         <mesh ref={coronaRef} material={coronaMaterial}>
           <planeGeometry args={[radius * 10, radius * 10]} />
         </mesh>
       </Billboard>
 
-      {/* Outer corona — very faint, large outer glow */}
+      {/* Outer corona -very faint, large outer glow */}
       <Billboard>
         <mesh ref={outerCoronaRef} material={outerCoronaMaterial}>
           <planeGeometry args={[radius * 16, radius * 16]} />
         </mesh>
       </Billboard>
 
-      {/* Point light from the Sun — the sole light source */}
+      {/* Point light from the Sun -the sole light source */}
       <pointLight
         ref={lightRef}
         color="#fff5e6"

@@ -11,7 +11,7 @@ void main() {
   vec3 viewDir = normalize(cameraPosition - vWorldPosition);
   vec3 sunDir = normalize(uSunPosition - vWorldPosition);
 
-  // Fresnel effect — atmosphere is brightest at the limb
+  // Fresnel effect -atmosphere is brightest at the limb
   float fresnel = 1.0 - dot(viewDir, vNormal);
   fresnel = pow(fresnel, uAtmospherePower);
 
@@ -22,7 +22,7 @@ void main() {
   // Combine
   float intensity = fresnel * uAtmosphereIntensity * sunFacing;
 
-  // Slight color shift — bluer at edges (Rayleigh approximation)
+  // Slight color shift -bluer at edges (Rayleigh approximation)
   vec3 color = mix(uAtmosphereColor, uAtmosphereColor * vec3(0.6, 0.8, 1.2), fresnel);
 
   gl_FragColor = vec4(color * 1.5, intensity);

@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react'
 import * as THREE from 'three'
 
 /**
- * Procedural starfield skybox — no external texture dependency.
+ * Procedural starfield skybox -no external texture dependency.
  * Creates a sphere of point stars with varying brightness and subtle color.
  */
 export function Skybox() {
@@ -46,7 +46,7 @@ export function Skybox() {
         colors[i * 3 + 2] = 0.6 + Math.random() * 0.2
       }
 
-      // Varying sizes — most small, a few bright
+      // Varying sizes -most small, a few bright
       sizes[i] = Math.random() < 0.97 ? 0.5 + Math.random() * 1.5 : 2 + Math.random() * 3
     }
 

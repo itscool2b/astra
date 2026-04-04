@@ -92,7 +92,7 @@ export function CameraController() {
       idleTimer.current = 0
       isIdle.current = false
     } else {
-      // Idle drift — subtle auto-orbit when user isn't interacting
+      // Idle drift -subtle auto-orbit when user isn't interacting
       idleTimer.current += delta
       if (idleTimer.current > 10 && controlsRef.current) {
         isIdle.current = true

@@ -33,11 +33,8 @@ export function LoadingScreen() {
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1, ease: 'easeOut' }}
           >
-            <div style={{ fontSize: 48, fontWeight: 700, letterSpacing: 12, color: '#fff', marginBottom: 16 }}>
+            <div style={{ fontSize: 48, fontWeight: 700, letterSpacing: 12, color: '#fff' }}>
               ASTRA
-            </div>
-            <div style={{ fontSize: 12, letterSpacing: 4, color: 'rgba(255,255,255,0.3)', textAlign: 'center' }}>
-              EXPLORING THE SOLAR SYSTEM
             </div>
           </motion.div>
 

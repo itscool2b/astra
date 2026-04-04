@@ -90,6 +90,6 @@ void main() {
   float limb = pow(rim, 1.5) * 0.4;
   color *= (1.0 - limb);
 
-  // Emissive HDR output — we rely on bloom to make it glow
+  // Emissive HDR output -we rely on bloom to make it glow
   gl_FragColor = vec4(color * 2.5, 1.0);
 }

@@ -101,7 +101,7 @@ export function APODCard() {
               onClick={(e) => e.stopPropagation()}
             >
               <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: 2, color: '#4a90d9', marginBottom: 8 }}>
-                Astronomy Picture of the Day — {apod.date}
+                Astronomy Picture of the Day | {apod.date}
               </div>
               <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16 }}>{apod.title}</h2>
               {apod.media_type === 'image' && (

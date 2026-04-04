@@ -1,16 +1,16 @@
 import { useMemo } from 'react'
 import { useEONET, useDONKIFlares, useNEOFeed } from '../../api/hooks'
 
-function getCategoryIcon(categories: { id: string; title: string }[]): string {
+function getCategoryLabel(categories: { id: string; title: string }[]): string {
   const title = (categories[0]?.title ?? '').toLowerCase()
-  if (title.includes('wildfire') || title.includes('fire')) return '\uD83D\uDD25'
-  if (title.includes('volcan')) return '\uD83C\uDF0B'
-  if (title.includes('storm') || title.includes('cyclon') || title.includes('hurricane') || title.includes('typhoon')) return '\uD83C\uDF00'
-  if (title.includes('ice') || title.includes('snow')) return '\u2744\uFE0F'
-  if (title.includes('flood')) return '\uD83C\uDF0A'
-  if (title.includes('earthquake')) return '\uD83D\uDCA5'
-  if (title.includes('drought')) return '\u2600\uFE0F'
-  return '\uD83C\uDF0D'
+  if (title.includes('wildfire') || title.includes('fire')) return 'WILDFIRE'
+  if (title.includes('volcan')) return 'VOLCANO'
+  if (title.includes('storm') || title.includes('cyclon') || title.includes('hurricane') || title.includes('typhoon')) return 'STORM'
+  if (title.includes('ice') || title.includes('snow')) return 'ICE'
+  if (title.includes('flood')) return 'FLOOD'
+  if (title.includes('earthquake')) return 'QUAKE'
+  if (title.includes('drought')) return 'DROUGHT'
+  return 'EVENT'
 }
 
 function timeAgo(dateStr: string): string {
@@ -39,16 +39,15 @@ export function SpaceHUD() {
     // EONET events
     if (eonetEvents) {
       for (const evt of eonetEvents.slice(0, 8)) {
-        const icon = getCategoryIcon(evt.categories)
-        const category = evt.categories[0]?.title ?? 'Event'
-        items.push(`${icon} ${category} \u2014 ${evt.title}`)
+        const label = getCategoryLabel(evt.categories)
+        items.push(`${label} | ${evt.title}`)
       }
     }
 
     // DONKI flares
     if (flares) {
       for (const flare of flares.slice(0, 5)) {
-        items.push(`\u2600\uFE0F Solar Flare ${flare.classType} \u2014 ${timeAgo(flare.peakTime || flare.beginTime)}`)
+        items.push(`FLR ${flare.classType} | ${timeAgo(flare.peakTime || flare.beginTime)}`)
       }
     }
 
@@ -67,9 +66,9 @@ export function SpaceHUD() {
       for (const neo of sorted) {
         const ca = neo.close_approach_data[0]
         const lunarDist = parseFloat(ca.miss_distance.lunar).toFixed(1)
-        const dateStr = ca.close_approach_date
-        const hazard = neo.is_potentially_hazardous_asteroid ? ' \u26A0\uFE0F' : ''
-        items.push(`\u2604\uFE0F ${neo.name}${hazard} \u2014 ${lunarDist} lunar dist \u2014 ${dateStr}`)
+        const dateLabel = new Date(ca.close_approach_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        const hazard = neo.is_potentially_hazardous_asteroid ? ' [PHA]' : ''
+        items.push(`${neo.name}${hazard} | ${lunarDist} LD | ${dateLabel}`)
       }
     }
 
@@ -84,8 +83,8 @@ export function SpaceHUD() {
   if (tickerItems.length === 0 && !flares) return null
 
   // Double the items for seamless loop
-  const displayItems = tickerItems.length > 0 ? [...tickerItems, ...tickerItems] : ['Fetching live space data...']
-  const tickerText = displayItems.join('    \u2502    ')
+  const displayItems = tickerItems.length > 0 ? [...tickerItems, ...tickerItems] : []
+  const tickerText = displayItems.join(' // ')
 
   return (
     <>

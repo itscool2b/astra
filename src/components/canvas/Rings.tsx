@@ -18,7 +18,7 @@ export function Rings({
     const segments = 128
     const geo = new THREE.RingGeometry(innerRadius, outerRadius, segments)
 
-    // Fix UV mapping for rings — map to radial distance
+    // Fix UV mapping for rings -map to radial distance
     const pos = geo.attributes.position
     const uv = geo.attributes.uv
     for (let i = 0; i < pos.count; i++) {

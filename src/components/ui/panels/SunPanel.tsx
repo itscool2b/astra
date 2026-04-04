@@ -58,7 +58,7 @@ export function SunPanel() {
                 }}
               >
                 <div style={{ fontSize: 11, fontWeight: 500 }}>
-                  {new Date(cme.startTime).toLocaleDateString()} — {cme.sourceLocation || 'Unknown location'}
+                  {new Date(cme.startTime).toLocaleDateString()} | {cme.sourceLocation || 'Unknown location'}
                 </div>
                 {cme.note && (
                   <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 4, lineHeight: 1.4 }}>

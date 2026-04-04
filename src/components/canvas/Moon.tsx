@@ -25,7 +25,7 @@ export function Moon({ data, parentPosition }: MoonProps) {
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
 
-  // Moon radius — smaller scale factor than planets
+  // Moon radius -smaller scale factor than planets
   const radius = Math.max(radiusToScene(data.physical.radius, scaleMode) * 0.5, 0.05)
   const isSelected = selectedObject?.id === data.id
 

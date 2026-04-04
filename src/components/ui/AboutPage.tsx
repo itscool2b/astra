@@ -20,7 +20,7 @@ const DATA_SOURCES = [
     fullName: 'Near Earth Object Web Service',
     url: 'https://api.nasa.gov',
     description:
-      'Tracks every asteroid that comes close to Earth. ASTRA fetches the next 7 days of close approaches and plots tracked asteroids directly in the 3D scene — red for potentially hazardous, yellow for safe passes.',
+      'Tracks every asteroid that comes close to Earth. ASTRA fetches the next 7 days of close approaches and plots tracked asteroids directly in the 3D scene, red for potentially hazardous, yellow for safe passes.',
     updates: 'Every hour',
     where: 'Glowing dots in the 3D scene + live ticker at the bottom.',
   },
@@ -47,7 +47,7 @@ const DATA_SOURCES = [
     fullName: 'Earth Observatory Natural Event Tracker',
     url: 'https://eonet.gsfc.nasa.gov',
     description:
-      'Tracks active natural events worldwide — wildfires, volcanic eruptions, severe storms, floods, icebergs, earthquakes, and more. ASTRA shows these as colored dots on Earth\'s surface and lists them in the Earth data panel.',
+      'Tracks active natural events worldwide: wildfires, volcanic eruptions, severe storms, floods, icebergs, earthquakes, and more. ASTRA shows these as colored dots on Earth\'s surface and lists them in the Earth data panel.',
     updates: 'Every hour',
     where: 'Click Earth → "Active Natural Events" list. Also visible as glowing markers on the 3D globe and in the live ticker.',
   },
@@ -165,7 +165,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                   marginBottom: 24,
                 }}
               >
-                Interactive 3D Solar System Explorer
+                Solar System
               </div>
               <div
                 style={{
@@ -184,10 +184,9 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                   margin: '0 auto',
                 }}
               >
-                ASTRA is a real-time, interactive 3D model of our solar system powered by live
-                NASA data. Every planet, moon, and asteroid is clickable. Orbital positions are
-                mathematically computed. Space weather, Earth events, and rover photos update
-                continuously from NASA's public APIs.
+                ASTRA shows our solar system in 3D with live data from NASA. Every planet,
+                moon, and asteroid is placed using real orbital mechanics. Space weather,
+                Earth events, and spacecraft positions update from NASA's public APIs.
               </p>
             </div>
 
@@ -195,8 +194,8 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
             <Section title="What's in the Scene">
               <p style={styles.paragraph}>
                 The 3D scene contains every major object in our solar system, rendered with real
-                NASA texture maps and physically-based lighting. The Sun is the sole light source
-                — the dark side of every planet is truly dark.
+                NASA texture maps and physically-based lighting. The Sun is the only light source.
+                Planets cast into shadow look dark, lit sides show full surface detail.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 16 }}>
                 {OBJECTS.map((obj) => (
@@ -247,7 +246,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
             <Section title="How Orbital Positions Work">
               <p style={styles.paragraph}>
                 Planet and moon positions are not pre-recorded animations. They're computed in
-                real-time using <strong style={{ color: 'rgba(255,255,255,0.85)' }}>Keplerian orbital mechanics</strong> — the
+                using <strong style={{ color: 'rgba(255,255,255,0.85)' }}>Keplerian orbital mechanics</strong>, the
                 same math used in actual spaceflight. Each body has 6 orbital parameters (semi-major
                 axis, eccentricity, inclination, longitude of ascending node, argument of perihelion,
                 and mean anomaly at epoch) from the J2000 reference frame.
@@ -260,7 +259,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
               <div style={styles.infoBox}>
                 <strong>Scale modes:</strong> In <em>Compressed</em> mode, distances are logarithmically
                 scaled so all planets fit on screen. In <em>Realistic</em> mode, true proportional
-                distances are used — planets become tiny dots, and you need to fly to them. Toggle
+                distances are used. Planets become tiny dots, and you need to fly to them. Toggle
                 with the button in the top-right.
               </div>
             </Section>
@@ -357,7 +356,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
                 <div style={styles.tickerItem}>
-                  <span style={{ fontSize: 16 }}>🔥</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.6)' }}>WILDFIRE</span>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
                       Earth Events (EONET)
@@ -368,7 +367,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                   </div>
                 </div>
                 <div style={styles.tickerItem}>
-                  <span style={{ fontSize: 16 }}>☀️</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.6)' }}>FLR</span>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
                       Solar Flares (DONKI)
@@ -379,7 +378,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                   </div>
                 </div>
                 <div style={styles.tickerItem}>
-                  <span style={{ fontSize: 16 }}>☄️</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.6)' }}>NEO</span>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.8)' }}>
                       Near-Earth Asteroids (NEO)
@@ -443,16 +442,16 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
                 pipeline:
               </p>
               <ul style={styles.list}>
-                <li><strong style={styles.strong}>Planet textures</strong> — 2K NASA surface maps for all planets, with normal mapping for terrain detail</li>
-                <li><strong style={styles.strong}>Atmosphere shaders</strong> — Custom GLSL Rayleigh scattering simulation on planets with atmospheres</li>
-                <li><strong style={styles.strong}>Sun</strong> — Custom volumetric glow shader with animated FBM noise + billboard corona</li>
-                <li><strong style={styles.strong}>Saturn's rings</strong> — Procedural texture with the Cassini Division gap</li>
-                <li><strong style={styles.strong}>Earth's clouds</strong> — Separate rotating cloud layer over the surface</li>
-                <li><strong style={styles.strong}>Bloom</strong> — HDR glow on the Sun and atmosphere edges</li>
-                <li><strong style={styles.strong}>ACES Filmic tone mapping</strong> — Hollywood color science for deep blacks and rich highlights</li>
-                <li><strong style={styles.strong}>Chromatic aberration</strong> — Subtle lens effect at screen edges</li>
-                <li><strong style={styles.strong}>Film grain + vignette</strong> — Cinematic finish</li>
-                <li><strong style={styles.strong}>Logarithmic depth buffer</strong> — Handles the enormous scale from Sun surface to Kuiper Belt</li>
+                <li><strong style={styles.strong}>Planet textures</strong> | 2K NASA surface maps for all planets, with normal mapping for terrain detail</li>
+                <li><strong style={styles.strong}>Atmosphere shaders</strong> | Custom GLSL Rayleigh scattering simulation on planets with atmospheres</li>
+                <li><strong style={styles.strong}>Sun</strong> | Custom volumetric glow shader with animated FBM noise + billboard corona</li>
+                <li><strong style={styles.strong}>Saturn's rings</strong> | Procedural texture with the Cassini Division gap</li>
+                <li><strong style={styles.strong}>Earth's clouds</strong> | Separate rotating cloud layer over the surface</li>
+                <li><strong style={styles.strong}>Bloom</strong> | HDR glow on the Sun and atmosphere edges</li>
+                <li><strong style={styles.strong}>ACES Filmic tone mapping</strong> | Hollywood color science for deep blacks and rich highlights</li>
+                <li><strong style={styles.strong}>Chromatic aberration</strong> | Subtle lens effect at screen edges</li>
+                <li><strong style={styles.strong}>Film grain + vignette</strong> | Cinematic finish</li>
+                <li><strong style={styles.strong}>Logarithmic depth buffer</strong> | Handles the enormous scale from Sun surface to Kuiper Belt</li>
               </ul>
             </Section>
 
@@ -463,9 +462,9 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
               </p>
               <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
                 {[
-                  { tier: 'High', desc: 'Discrete GPU — full effects, 8K textures', color: '#44cc88' },
-                  { tier: 'Medium', desc: 'Integrated GPU — reduced bloom, 4K textures', color: '#ffaa00' },
-                  { tier: 'Low', desc: 'Mobile — simplified shaders, 2K textures', color: '#ff8c5a' },
+                  { tier: 'High', desc: 'Discrete GPU, full effects, 8K textures', color: '#44cc88' },
+                  { tier: 'Medium', desc: 'Integrated GPU, reduced bloom, 4K textures', color: '#ffaa00' },
+                  { tier: 'Low', desc: 'Mobile, simplified shaders, 2K textures', color: '#ff8c5a' },
                 ].map((t) => (
                   <div
                     key={t.tier}
