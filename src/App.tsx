@@ -2,6 +2,7 @@ import { Canvas } from '@react-three/fiber'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { Scene } from './components/canvas/Scene'
+import { useTimeLoop } from './lib/useTimeLoop'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -13,6 +14,8 @@ const queryClient = new QueryClient({
 })
 
 export default function App() {
+  useTimeLoop()
+
   return (
     <QueryClientProvider client={queryClient}>
       <div style={{ width: '100%', height: '100%', position: 'relative' }}>
