@@ -13,6 +13,7 @@ import coronaFragmentShader from '../../lib/shaders/corona.frag'
 export function Sun() {
   const meshRef = useRef<THREE.Mesh>(null)
   const coronaRef = useRef<THREE.Mesh>(null)
+  const outerCoronaRef = useRef<THREE.Mesh>(null)
   const lightRef = useRef<THREE.PointLight>(null)
   const scaleMode = useStore((s) => s.scaleMode)
 
@@ -51,10 +52,28 @@ export function Sun() {
     []
   )
 
+  const outerCoronaMaterial = useMemo(
+    () =>
+      new THREE.ShaderMaterial({
+        vertexShader: coronaVertexShader,
+        fragmentShader: coronaFragmentShader,
+        uniforms: {
+          uTime: { value: 0 },
+          uOpacity: { value: 0.25 },
+        },
+        transparent: true,
+        side: THREE.DoubleSide,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+      }),
+    []
+  )
+
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime()
     sunMaterial.uniforms.uTime.value = t
     coronaMaterial.uniforms.uTime.value = t
+    outerCoronaMaterial.uniforms.uTime.value = t
 
     if (meshRef.current) {
       meshRef.current.rotation.y = t * 0.02
@@ -71,7 +90,14 @@ export function Sun() {
       {/* Corona glow — billboard that always faces camera */}
       <Billboard>
         <mesh ref={coronaRef} material={coronaMaterial}>
-          <planeGeometry args={[radius * 6, radius * 6]} />
+          <planeGeometry args={[radius * 10, radius * 10]} />
+        </mesh>
+      </Billboard>
+
+      {/* Outer corona — very faint, large outer glow */}
+      <Billboard>
+        <mesh ref={outerCoronaRef} material={outerCoronaMaterial}>
+          <planeGeometry args={[radius * 16, radius * 16]} />
         </mesh>
       </Billboard>
 
@@ -79,7 +105,7 @@ export function Sun() {
       <pointLight
         ref={lightRef}
         color="#fff5e6"
-        intensity={3}
+        intensity={5}
         distance={0}
         decay={0}
         castShadow={false}

@@ -138,8 +138,17 @@ export function Planet({ data }: PlanetProps) {
             emissiveMap={nightTex}
             emissive={nightTex ? '#ffffff' : '#000000'}
             emissiveIntensity={nightTex ? 0.6 : 0}
-            roughness={0.8}
-            metalness={0.1}
+            roughness={
+              data.type === 'terrestrial' ? 0.9 :
+              data.type === 'gas-giant' ? 0.4 :
+              data.type === 'ice-giant' ? 0.5 :
+              0.8
+            }
+            metalness={
+              data.type === 'gas-giant' ? 0.15 :
+              data.type === 'ice-giant' ? 0.1 :
+              0.1
+            }
           />
         </mesh>
 
@@ -172,7 +181,7 @@ export function Planet({ data }: PlanetProps) {
               data.id === 'neptune' ? '#3f54ba' :
               '#aaaaaa'
             }
-            intensity={data.id === 'earth' ? 1.2 : data.id === 'venus' ? 1.5 : 0.6}
+            intensity={data.id === 'earth' ? 1.5 : data.id === 'venus' ? 1.5 : 0.6}
             power={data.id === 'venus' ? 2.0 : 3.0}
           />
         )}

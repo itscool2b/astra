@@ -32,8 +32,8 @@ export function Effects() {
     return (
       <EffectComposer multisampling={0}>
         <Bloom
-          intensity={1.2}
-          luminanceThreshold={0.4}
+          intensity={1.6}
+          luminanceThreshold={0.3}
           luminanceSmoothing={0.6}
           mipmapBlur
           radius={0.8}
@@ -48,11 +48,11 @@ export function Effects() {
         <Noise
           premultiply
           blendFunction={BlendFunction.SOFT_LIGHT}
-          opacity={0.15}
+          opacity={0.2}
         />
         <Vignette
           offset={0.3}
-          darkness={0.6}
+          darkness={0.75}
           blendFunction={BlendFunction.NORMAL}
         />
       </EffectComposer>
@@ -62,8 +62,8 @@ export function Effects() {
   return (
     <EffectComposer multisampling={0}>
       <Bloom
-        intensity={1.2}
-        luminanceThreshold={0.4}
+        intensity={1.6}
+        luminanceThreshold={0.3}
         luminanceSmoothing={0.6}
         mipmapBlur
         radius={0.8}
@@ -71,7 +71,7 @@ export function Effects() {
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       <Vignette
         offset={0.3}
-        darkness={0.6}
+        darkness={0.75}
         blendFunction={BlendFunction.NORMAL}
       />
     </EffectComposer>

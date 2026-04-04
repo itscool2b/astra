@@ -36,7 +36,7 @@ export function Atmosphere({
   )
 
   return (
-    <mesh material={material} scale={1.08}>
+    <mesh material={material} scale={1.12}>
       <sphereGeometry args={[radius, 64, 64]} />
     </mesh>
   )
