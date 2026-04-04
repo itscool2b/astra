@@ -124,8 +124,8 @@ export function SpaceHUD() {
       <div
         style={{
           position: 'absolute',
-          top: 16,
-          right: 16,
+          top: 60,
+          right: 24,
           display: 'flex',
           alignItems: 'center',
           gap: 6,
