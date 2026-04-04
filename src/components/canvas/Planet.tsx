@@ -8,6 +8,7 @@ import { computePosition, dateToJulian } from '../../lib/orbital'
 import { auToScene, radiusToScene } from '../../lib/scales'
 import { OrbitLine } from './OrbitLine'
 import { Atmosphere } from './Atmosphere'
+import { Rings } from './Rings'
 
 interface PlanetProps {
   data: PlanetData
@@ -115,6 +116,16 @@ export function Planet({ data }: PlanetProps) {
             }
             intensity={data.id === 'earth' ? 1.2 : data.id === 'venus' ? 1.5 : 0.6}
             power={data.id === 'venus' ? 2.0 : 3.0}
+          />
+        )}
+
+        {/* Ring system */}
+        {data.hasRings && data.ringInnerRadius && data.ringOuterRadius && (
+          <Rings
+            innerRadius={radius * data.ringInnerRadius}
+            outerRadius={radius * data.ringOuterRadius}
+            color={data.color}
+            opacity={data.id === 'saturn' ? 0.6 : 0.2}
           />
         )}
 
