@@ -16,10 +16,12 @@ export function auToScene(au: number, mode: ScaleMode): number {
   if (mode === 'realistic') {
     return au * AU_REALISTIC
   }
-  // Compressed: logarithmic scale
+  // Compressed: logarithmic scale preserving sign
   // Maps 0.39 AU (Mercury) -> ~15 units, 30 AU (Neptune) -> ~120 units
-  if (au <= 0) return 0
-  return Math.log2(1 + au * 8) * 12
+  if (au === 0) return 0
+  const sign = au < 0 ? -1 : 1
+  const abs = Math.abs(au)
+  return sign * Math.log2(1 + abs * 8) * 12
 }
 
 /**

@@ -116,14 +116,18 @@ export function useSpacecraftPosition(horizonsId: string) {
       // The position line has X, Y, Z values
       // Lines: [0]=JDTDB, [1]=X Y Z, [2]=VX VY VZ, [3]=LT RG RR
       if (dataLines.length < 2) throw new Error('Insufficient data')
+      // Format: "X =-1.462E+08 Y =-3.667E+07 Z = 2.006E+05"
       const posLine = dataLines[1].trim()
-      const parts = posLine.split(/\s+/).map(Number)
+      const xMatch = posLine.match(/X\s*=\s*([-\d.E+]+)/i)
+      const yMatch = posLine.match(/Y\s*=\s*([-\d.E+]+)/i)
+      const zMatch = posLine.match(/Z\s*=\s*([-\d.E+]+)/i)
+      if (!xMatch || !yMatch || !zMatch) throw new Error('Could not parse position')
       // Horizons outputs in km, convert to AU
       const kmToAu = 1 / 1.496e8
       return {
-        x: parts[0] * kmToAu,
-        y: parts[1] * kmToAu,
-        z: parts[2] * kmToAu,
+        x: parseFloat(xMatch[1]) * kmToAu,
+        y: parseFloat(yMatch[1]) * kmToAu,
+        z: parseFloat(zMatch[1]) * kmToAu,
       }
     },
     staleTime: 24 * 60 * 60 * 1000,
