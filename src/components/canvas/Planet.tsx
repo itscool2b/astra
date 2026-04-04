@@ -17,16 +17,22 @@ import { bodyPositions } from '../../lib/bodyPositions'
 
 const textureLoader = new THREE.TextureLoader()
 
-function useTextureAsync(path: string | undefined): THREE.Texture | null {
-  return useMemo(() => {
+function useTextureAsync(path: string | undefined): { texture: THREE.Texture | null; loaded: boolean } {
+  const [loaded, setLoaded] = useState(false)
+  const texture = useMemo(() => {
     if (!path) return null
+    setLoaded(false)
     try {
-      return textureLoader.load(`/textures/${path}`)
+      return textureLoader.load(
+        `/textures/${path}`,
+        () => setLoaded(true),
+      )
     } catch {
       return null
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [path])
+  return { texture, loaded }
 }
 
 interface PlanetProps {
@@ -52,10 +58,10 @@ export function Planet({ data }: PlanetProps) {
   const isSelected = selectedObject?.id === data.id
 
   // Load textures
-  const albedoTex = useTextureAsync(data.textureSet.albedo)
-  const normalTex = useTextureAsync(data.textureSet.normal)
-  const cloudsTex = useTextureAsync(data.textureSet.clouds)
-  const nightTex = useTextureAsync(data.textureSet.night)
+  const { texture: albedoTex, loaded: albedoLoaded } = useTextureAsync(data.textureSet.albedo)
+  const { texture: normalTex, loaded: normalLoaded } = useTextureAsync(data.textureSet.normal)
+  const { texture: cloudsTex } = useTextureAsync(data.textureSet.clouds)
+  const { texture: nightTex, loaded: nightLoaded } = useTextureAsync(data.textureSet.night)
 
   const target: CelestialTarget = useMemo(
     () => ({ id: data.id, name: data.name, type: 'planet' }),
@@ -118,7 +124,7 @@ export function Planet({ data }: PlanetProps) {
   }, [setHoveredObject])
 
   // Determine material color: white if texture loaded, fallback color otherwise
-  const materialColor = albedoTex ? '#ffffff' : data.color
+  const materialColor = albedoLoaded ? '#ffffff' : data.color
 
   return (
     <>
@@ -135,11 +141,11 @@ export function Planet({ data }: PlanetProps) {
           <sphereGeometry args={[radius, 64, 64]} />
           <meshStandardMaterial
             color={materialColor}
-            map={albedoTex}
-            normalMap={normalTex}
-            emissiveMap={nightTex}
-            emissive={nightTex ? '#ffffff' : '#000000'}
-            emissiveIntensity={nightTex ? 0.6 : 0}
+            map={albedoLoaded ? albedoTex : null}
+            normalMap={normalLoaded ? normalTex : null}
+            emissiveMap={nightLoaded ? nightTex : null}
+            emissive={nightLoaded ? '#ffffff' : '#000000'}
+            emissiveIntensity={nightLoaded ? 0.6 : 0}
             roughness={
               data.type === 'terrestrial' ? 0.9 :
               data.type === 'gas-giant' ? 0.4 :
@@ -185,6 +191,14 @@ export function Planet({ data }: PlanetProps) {
             }
             intensity={data.id === 'earth' ? 1.5 : data.id === 'venus' ? 1.5 : 0.6}
             power={data.id === 'venus' ? 2.0 : 3.0}
+            scale={
+              data.id === 'venus' ? 1.25 :
+              data.id === 'earth' ? 1.12 :
+              data.id === 'mars' ? 1.05 :
+              data.id === 'jupiter' || data.id === 'saturn' ? 1.15 :
+              data.id === 'uranus' || data.id === 'neptune' ? 1.15 :
+              1.12
+            }
           />
         )}
 
@@ -195,6 +209,7 @@ export function Planet({ data }: PlanetProps) {
             outerRadius={radius * data.ringOuterRadius}
             color={data.color}
             opacity={data.id === 'saturn' ? 0.6 : 0.2}
+            planetId={data.id}
           />
         )}
 

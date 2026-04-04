@@ -49,7 +49,7 @@ export function ISS({ radius }: ISSProps) {
 
     const lat = parseFloat(issData.iss_position.latitude)
     const lon = parseFloat(issData.iss_position.longitude)
-    const pos = latLonToPosition(lat, lon, radius, radius * 0.04)
+    const pos = latLonToPosition(lat, lon, radius, radius * 0.064)
 
     groupRef.current.position.copy(pos)
     bodyPositions.set('iss', groupRef.current.position, issSize)

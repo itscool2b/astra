@@ -119,13 +119,12 @@ function NEOMarker({ data, jd, scaleMode }: { data: NEOWithOrbit; jd: number; sc
 
   useFrame(() => {
     if (!meshRef.current) return
-    const [x, , z] = computeNEOPosition(data.orbit, jd)
+    const [x, y, z] = computeNEOPosition(data.orbit, jd)
     // y (ecliptic) goes to scene-z, z (ecliptic) goes to scene-y
-    const [, ay, ] = computeNEOPosition(data.orbit, jd)
     meshRef.current.position.set(
       auToScene(x, scaleMode as 'compressed' | 'realistic'),
       auToScene(z, scaleMode as 'compressed' | 'realistic'),
-      auToScene(ay, scaleMode as 'compressed' | 'realistic'),
+      auToScene(y, scaleMode as 'compressed' | 'realistic'),
     )
   })
 

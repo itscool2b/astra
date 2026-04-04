@@ -47,7 +47,7 @@ export function CameraController() {
 
     const targetRadius = bodyPositions.getRadius(cameraTarget.id)
     // Orbit distance: larger for bigger objects, minimum 3 units so camera doesn't clip
-    const orbitDist = Math.max(targetRadius * 6, 3)
+    const orbitDist = Math.max(targetRadius * 6, 5)
 
     const fs = flyState.current
     fs.active = true

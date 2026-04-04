@@ -8,6 +8,7 @@ interface AtmosphereProps {
   color?: string
   intensity?: number
   power?: number
+  scale?: number
 }
 
 export function Atmosphere({
@@ -15,6 +16,7 @@ export function Atmosphere({
   color = '#4a90d9',
   intensity = 1.0,
   power = 3.0,
+  scale = 1.12,
 }: AtmosphereProps) {
   const material = useMemo(
     () =>
@@ -36,7 +38,7 @@ export function Atmosphere({
   )
 
   return (
-    <mesh material={material} scale={1.12}>
+    <mesh material={material} scale={scale}>
       <sphereGeometry args={[radius, 64, 64]} />
     </mesh>
   )

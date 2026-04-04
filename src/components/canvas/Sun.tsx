@@ -125,7 +125,7 @@ export function Sun() {
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <sphereGeometry args={[radius, 64, 64]} />
+        <sphereGeometry args={[radius, 32, 32]} />
       </mesh>
 
       {/* Name label */}
