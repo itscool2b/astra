@@ -7,6 +7,7 @@ import { useStore, type CelestialTarget } from '../../store/useStore'
 import { computePosition, dateToJulian } from '../../lib/orbital'
 import { auToScene, radiusToScene } from '../../lib/scales'
 import { OrbitLine } from './OrbitLine'
+import { Atmosphere } from './Atmosphere'
 
 interface PlanetProps {
   data: PlanetData
@@ -98,6 +99,24 @@ export function Planet({ data }: PlanetProps) {
             metalness={0.1}
           />
         </mesh>
+
+        {/* Atmosphere */}
+        {data.atmosphere && (
+          <Atmosphere
+            radius={radius}
+            color={
+              data.id === 'earth' ? '#4a90d9' :
+              data.id === 'venus' ? '#e8b86a' :
+              data.id === 'mars' ? '#c47040' :
+              data.id === 'jupiter' || data.id === 'saturn' ? '#c4a882' :
+              data.id === 'uranus' ? '#7ec8e3' :
+              data.id === 'neptune' ? '#3f54ba' :
+              '#aaaaaa'
+            }
+            intensity={data.id === 'earth' ? 1.2 : data.id === 'venus' ? 1.5 : 0.6}
+            power={data.id === 'venus' ? 2.0 : 3.0}
+          />
+        )}
 
         {/* Hover/selection glow */}
         {(hovered || isSelected) && (
