@@ -9,6 +9,8 @@ import { auToScene, radiusToScene } from '../../lib/scales'
 import { OrbitLine } from './OrbitLine'
 import { Atmosphere } from './Atmosphere'
 import { Rings } from './Rings'
+import { MOONS_BY_PARENT } from '../../data/moons'
+import { Moon } from './Moon'
 
 interface PlanetProps {
   data: PlanetData
@@ -17,6 +19,7 @@ interface PlanetProps {
 export function Planet({ data }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null)
   const groupRef = useRef<THREE.Group>(null)
+  const positionRef = useRef(new THREE.Vector3())
   const [hovered, setHovered] = useState(false)
 
   const scaleMode = useStore((s) => s.scaleMode)
@@ -46,6 +49,8 @@ export function Planet({ data }: PlanetProps) {
       auToScene(z, scaleMode), // ecliptic Z -> scene Y
       auToScene(y, scaleMode)  // ecliptic Y -> scene Z
     )
+
+    positionRef.current.copy(groupRef.current.position)
 
     // Self-rotation
     if (meshRef.current) {
@@ -161,6 +166,9 @@ export function Planet({ data }: PlanetProps) {
           {data.name}
         </Html>
       </group>
+      {MOONS_BY_PARENT.get(data.id)?.map((moon) => (
+        <Moon key={moon.id} data={moon} parentPosition={positionRef.current} />
+      ))}
     </>
   )
 }
