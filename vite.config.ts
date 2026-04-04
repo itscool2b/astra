@@ -55,7 +55,7 @@ function nasaDevProxy(): Plugin {
             }
 
             case 'epic': {
-              targetUrl = `https://api.nasa.gov/EPIC/api/natural?api_key=${apiKey}`
+              targetUrl = 'https://epic.gsfc.nasa.gov/api/natural'
               break
             }
 

@@ -81,6 +81,23 @@ export function useDONKIFlares() {
   })
 }
 
+// --- NASA Image Library ---
+export function useNASAImages(query: string) {
+  return useQuery({
+    queryKey: ['nasa-images', query],
+    queryFn: () => fetchApi<{
+      collection: {
+        items: {
+          data: { title: string; description: string; date_created: string; nasa_id: string }[]
+          links?: { href: string; rel: string }[]
+        }[]
+      }
+    }>('/nasa-images', { q: query }),
+    staleTime: 24 * 60 * 60 * 1000,
+    enabled: query.length > 0,
+  })
+}
+
 // --- EONET ---
 export function useEONET() {
   return useQuery({
