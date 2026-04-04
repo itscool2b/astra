@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
+import { Scene } from './components/canvas/Scene'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +28,7 @@ export default function App() {
           style={{ background: '#000' }}
         >
           <Suspense fallback={null}>
-            <ambientLight intensity={0.02} />
+            <Scene />
           </Suspense>
         </Canvas>
       </div>
