@@ -5,6 +5,7 @@ import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
 import { TopBar } from './components/ui/TopBar'
 import { TimeSlider } from './components/ui/TimeSlider'
+import { DataPanel } from './components/ui/DataPanel'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +39,7 @@ export default function App() {
         </Canvas>
         <TopBar />
         <TimeSlider />
+        <DataPanel />
       </div>
     </QueryClientProvider>
   )
