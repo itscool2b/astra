@@ -21,6 +21,14 @@ const allObjects: SearchableObject[] = [
   ...SPACECRAFT.map((s) => ({ id: s.id, name: s.name, type: 'spacecraft' as const })),
 ]
 
+const grouped: { label: string; type: string; items: SearchableObject[] }[] = [
+  { label: 'Star', type: 'star', items: allObjects.filter((o) => o.type === 'star') },
+  { label: 'Planets', type: 'planet', items: allObjects.filter((o) => o.type === 'planet') },
+  { label: 'Dwarf Planets', type: 'dwarf-planet', items: allObjects.filter((o) => o.type === 'dwarf-planet') },
+  { label: 'Moons', type: 'moon', items: allObjects.filter((o) => o.type === 'moon') },
+  { label: 'Spacecraft', type: 'spacecraft', items: allObjects.filter((o) => o.type === 'spacecraft') },
+]
+
 const fuse = new Fuse(allObjects, {
   keys: ['name'],
   threshold: 0.3,
@@ -29,14 +37,15 @@ const fuse = new Fuse(allObjects, {
 
 export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const selectObject = useStore((s) => s.selectObject)
   const flyTo = useStore((s) => s.flyTo)
 
-  const results = useMemo(() => {
+  const searchResults = useMemo(() => {
     if (!query.trim()) return []
-    return fuse.search(query).slice(0, 8)
+    return fuse.search(query).slice(0, 10).map((r) => r.item)
   }, [query])
 
   const handleSelect = useCallback(
@@ -51,11 +60,12 @@ export function SearchBar() {
       flyTo(target)
       setQuery('')
       setOpen(false)
+      inputRef.current?.blur()
     },
     [selectObject, flyTo]
   )
 
-  // Close on Escape
+  // Close on Escape, open on /
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setOpen(false)
@@ -69,8 +79,51 @@ export function SearchBar() {
     return () => window.removeEventListener('keydown', handler)
   }, [open])
 
+  // Close on outside click
+  useEffect(() => {
+    if (!open) return
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [open])
+
+  const showBrowse = open && query.trim() === ''
+  const showSearch = open && searchResults.length > 0
+
+  const itemStyle: React.CSSProperties = {
+    padding: '8px 16px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    transition: 'background 0.12s',
+  }
+
+  const renderItem = (obj: SearchableObject) => (
+    <div
+      key={obj.id}
+      onClick={() => handleSelect(obj)}
+      style={itemStyle}
+      onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+      onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+    >
+      <span style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.85)' }}>
+        {obj.name}
+      </span>
+      {obj.parentName && (
+        <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginLeft: 'auto' }}>
+          {obj.parentName}
+        </span>
+      )}
+    </div>
+  )
+
   return (
-    <div style={{ position: 'relative', flex: 1, maxWidth: 400 }}>
+    <div style={{ position: 'relative', flex: 1, maxWidth: 400 }} ref={dropdownRef}>
       <div
         style={{
           display: 'flex',
@@ -98,7 +151,7 @@ export function SearchBar() {
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
-          placeholder="Search planets, moons, asteroids..."
+          placeholder="Search or browse..."
           style={{
             flex: 1,
             background: 'none',
@@ -123,8 +176,8 @@ export function SearchBar() {
         )}
       </div>
 
-      {/* Dropdown */}
-      {open && results.length > 0 && (
+      {/* Dropdown: browse all (when empty) or search results */}
+      {(showBrowse || showSearch) && (
         <div
           style={{
             position: 'absolute',
@@ -137,38 +190,35 @@ export function SearchBar() {
             borderRadius: 12,
             overflow: 'hidden',
             zIndex: 100,
+            maxHeight: 400,
+            overflowY: 'auto',
           }}
         >
-          {results.map(({ item }) => (
-            <div
-              key={item.id}
-              onClick={() => handleSelect(item)}
-              style={{
-                padding: '10px 16px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                transition: 'background 0.15s',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent'
-              }}
-            >
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1, minWidth: 55 }}>
-                {item.type}
-              </span>
-              <span style={{ fontSize: 14, fontWeight: 500 }}>{item.name}</span>
-              {item.parentName && (
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginLeft: 'auto' }}>
-                  {item.parentName}
-                </span>
-              )}
-            </div>
-          ))}
+          {showSearch ? (
+            // Search results
+            searchResults.map(renderItem)
+          ) : (
+            // Browse all, grouped by category
+            grouped.map((group) => (
+              <div key={group.type}>
+                <div
+                  style={{
+                    padding: '8px 16px 4px',
+                    fontSize: 10,
+                    fontWeight: 600,
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    color: 'rgba(255,255,255,0.3)',
+                    borderTop: group.type !== 'star' ? '1px solid rgba(255,255,255,0.04)' : undefined,
+                    marginTop: group.type !== 'star' ? 4 : 0,
+                  }}
+                >
+                  {group.label}
+                </div>
+                {group.items.map(renderItem)}
+              </div>
+            ))
+          )}
         </div>
       )}
     </div>
