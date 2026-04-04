@@ -3,6 +3,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStore } from '../../store/useStore'
+import { bodyPositions } from '../../lib/bodyPositions'
 
 // Cubic bezier easing for cinematic fly-to
 function easeInOutCubic(t: number): number {
@@ -37,9 +38,8 @@ export function CameraController() {
   useEffect(() => {
     if (!cameraTarget || !isFlyingTo) return
 
-    // We need to resolve the target position — for now, use a placeholder
-    // This will be connected to the actual body positions later
-    const targetPos = new THREE.Vector3(0, 0, 0) // will be replaced
+    const targetPos = bodyPositions.get(cameraTarget.id) || new THREE.Vector3()
+    const targetRadius = bodyPositions.getRadius(cameraTarget.id)
 
     const fs = flyState.current
     fs.active = true
@@ -48,9 +48,9 @@ export function CameraController() {
     fs.startTarget.copy(controlsRef.current?.target || new THREE.Vector3())
     fs.endTarget.copy(targetPos)
 
-    // End position: orbit the target at a nice distance
+    // End position: orbit the target at a good viewing distance
     const dir = new THREE.Vector3().subVectors(camera.position, targetPos).normalize()
-    fs.endPos.copy(targetPos).add(dir.multiplyScalar(10))
+    fs.endPos.copy(targetPos).add(dir.multiplyScalar(targetRadius * 4))
 
     // Control point: arc above for a swooping path
     fs.controlPoint.lerpVectors(fs.startPos, fs.endPos, 0.5)

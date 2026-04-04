@@ -7,6 +7,7 @@ import { useStore, type CelestialTarget } from '../../store/useStore'
 import { computePosition, dateToJulian } from '../../lib/orbital'
 import { auToScene, radiusToScene } from '../../lib/scales'
 import { OrbitLine } from './OrbitLine'
+import { bodyPositions } from '../../lib/bodyPositions'
 
 interface DwarfPlanetProps {
   data: DwarfPlanetData
@@ -39,6 +40,7 @@ export function DwarfPlanet({ data }: DwarfPlanetProps) {
       auToScene(z, scaleMode),
       auToScene(y, scaleMode)
     )
+    bodyPositions.set(data.id, groupRef.current.position, radius)
   })
 
   const handleClick = useCallback((e: ThreeEvent<MouseEvent>) => {

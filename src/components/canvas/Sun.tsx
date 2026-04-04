@@ -4,6 +4,7 @@ import { Billboard } from '@react-three/drei'
 import * as THREE from 'three'
 import { useStore } from '../../store/useStore'
 import { sunRadiusToScene } from '../../lib/scales'
+import { bodyPositions } from '../../lib/bodyPositions'
 import sunVertexShader from '../../lib/shaders/sun.vert'
 import sunFragmentShader from '../../lib/shaders/sun.frag'
 import coronaVertexShader from '../../lib/shaders/corona.vert'
@@ -16,6 +17,7 @@ export function Sun() {
   const scaleMode = useStore((s) => s.scaleMode)
 
   const radius = sunRadiusToScene(scaleMode)
+  bodyPositions.set('sun', new THREE.Vector3(0, 0, 0), radius)
 
   const sunMaterial = useMemo(
     () =>

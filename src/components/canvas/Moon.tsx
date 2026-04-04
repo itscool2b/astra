@@ -6,6 +6,7 @@ import type { MoonData } from '../../data/types'
 import { useStore, type CelestialTarget } from '../../store/useStore'
 import { dateToJulian } from '../../lib/orbital'
 import { radiusToScene } from '../../lib/scales'
+import { bodyPositions } from '../../lib/bodyPositions'
 
 interface MoonProps {
   data: MoonData
@@ -54,6 +55,7 @@ export function Moon({ data, parentPosition }: MoonProps) {
       parentPosition.y,
       parentPosition.z + Math.sin(angle) * orbitRadius
     )
+    bodyPositions.set(data.id, groupRef.current.position, radius)
   })
 
   const handleClick = useCallback(

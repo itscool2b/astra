@@ -11,6 +11,7 @@ import { Atmosphere } from './Atmosphere'
 import { Rings } from './Rings'
 import { MOONS_BY_PARENT } from '../../data/moons'
 import { Moon } from './Moon'
+import { bodyPositions } from '../../lib/bodyPositions'
 
 interface PlanetProps {
   data: PlanetData
@@ -51,6 +52,7 @@ export function Planet({ data }: PlanetProps) {
     )
 
     positionRef.current.copy(groupRef.current.position)
+    bodyPositions.set(data.id, groupRef.current.position, radius)
 
     // Self-rotation
     if (meshRef.current) {
