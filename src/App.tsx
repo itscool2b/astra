@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Suspense } from 'react'
 import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
+import { TopBar } from './components/ui/TopBar'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,7 @@ export default function App() {
             <Scene />
           </Suspense>
         </Canvas>
+        <TopBar />
       </div>
     </QueryClientProvider>
   )
