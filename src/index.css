@@ -27,10 +27,6 @@ html, body, #root {
   border-radius: 2px;
 }
 
-/* Hide 3D Html labels when a full-screen overlay is open */
-.overlay-active canvas + div {
-  visibility: hidden !important;
-}
 
 /* Mobile responsive */
 @media (max-width: 768px) {

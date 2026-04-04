@@ -50,7 +50,9 @@ export function radiusToScene(radiusKm: number, mode: ScaleMode): number {
  */
 export function sunRadiusToScene(mode: ScaleMode): number {
   if (mode === 'realistic') {
-    return (SUN_RADIUS_KM / AU_KM) * AU_REALISTIC * 200
+    // True Sun radius at 100 units/AU = 0.465 units (tiny).
+    // Exaggerate 20x so it's visible but doesn't swallow Mercury (at 38.7 units).
+    return (SUN_RADIUS_KM / AU_KM) * AU_REALISTIC * 20
   }
   return 2.0 // Fixed size in compressed mode
 }

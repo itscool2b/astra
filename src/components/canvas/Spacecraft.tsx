@@ -453,7 +453,7 @@ export function Spacecraft({ data }: SpacecraftProps) {
   const { data: position } = useSpacecraftPosition(data.horizonsId)
 
   const isSelected = selectedObject?.id === data.id
-  const radius = 0.12 // Fixed small size for spacecraft
+  const radius = scaleMode === 'realistic' ? 0.8 : 0.12
 
   const target: CelestialTarget = useMemo(
     () => ({ id: data.id, name: data.name, type: 'spacecraft' }),
