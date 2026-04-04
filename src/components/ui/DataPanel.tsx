@@ -70,6 +70,28 @@ export function DataPanel() {
               </div>
               <div style={{ fontSize: 24, fontWeight: 700 }}>{selectedObject.name}</div>
             </div>
+            {(selectedObject.type === 'planet' || selectedObject.type === 'dwarf-planet') && (
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('open-compare', { detail: selectedObject.id }))}
+                style={{
+                  height: 24,
+                  borderRadius: 12,
+                  background: 'rgba(255,255,255,0.06)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  color: 'rgba(255,255,255,0.4)',
+                  fontSize: 10,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  padding: '0 10px',
+                  transition: 'all 0.15s',
+                  marginRight: 8,
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.1)' }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'rgba(255,255,255,0.4)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+              >
+                Compare
+              </button>
+            )}
             <button
               onClick={() => selectObject(null)}
               style={{

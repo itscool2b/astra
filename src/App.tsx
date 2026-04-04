@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
 import { useAdaptiveQuality } from './lib/useAdaptiveQuality'
@@ -14,6 +14,8 @@ import { LoadingScreen } from './components/ui/LoadingScreen'
 import { AboutPage } from './components/ui/AboutPage'
 import { ExoplanetBrowser } from './components/ui/ExoplanetBrowser'
 import { DSNStatus } from './components/ui/DSNStatus'
+import { ComparisonView } from './components/ui/ComparisonView'
+import { useKeyboardNav } from './lib/useKeyboardNav'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,8 +29,21 @@ const queryClient = new QueryClient({
 export default function App() {
   useTimeLoop()
   useAdaptiveQuality()
+  useKeyboardNav()
   const [aboutOpen, setAboutOpen] = useState(false)
   const [exoplanetsOpen, setExoplanetsOpen] = useState(false)
+  const [compareOpen, setCompareOpen] = useState(false)
+  const [compareInitialId, setCompareInitialId] = useState<string | undefined>()
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const id = (e as CustomEvent).detail as string
+      setCompareInitialId(id)
+      setCompareOpen(true)
+    }
+    window.addEventListener('open-compare', handler)
+    return () => window.removeEventListener('open-compare', handler)
+  }, [])
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -58,6 +73,7 @@ export default function App() {
         <LoadingScreen />
         <AboutPage open={aboutOpen} onClose={() => setAboutOpen(false)} />
         <ExoplanetBrowser open={exoplanetsOpen} onClose={() => setExoplanetsOpen(false)} />
+        <ComparisonView open={compareOpen} onClose={() => setCompareOpen(false)} initialId={compareInitialId} />
       </div>
     </QueryClientProvider>
   )
