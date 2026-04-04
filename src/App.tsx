@@ -16,7 +16,51 @@ import { ExoplanetBrowser } from './components/ui/ExoplanetBrowser'
 import { DSNStatus } from './components/ui/DSNStatus'
 import { ComparisonView } from './components/ui/ComparisonView'
 import { useKeyboardNav } from './lib/useKeyboardNav'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import { useStore } from './store/useStore'
+
+function InteractionHint() {
+  const loadingComplete = useStore((s) => s.loadingComplete)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (!loadingComplete) return
+    if (localStorage.getItem('astra-hint-shown')) return
+    localStorage.setItem('astra-hint-shown', '1')
+    setVisible(true)
+    const timer = setTimeout(() => setVisible(false), 5000)
+    return () => clearTimeout(timer)
+  }, [loadingComplete])
+
+  if (!visible) return null
+
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        bottom: 60,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: 15,
+        pointerEvents: 'none',
+        transition: 'opacity 1s ease-out',
+        opacity: visible ? 1 : 0,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 12,
+          color: 'rgba(255,255,255,0.35)',
+          letterSpacing: 0.5,
+        }}
+      >
+        Drag to orbit | Scroll to zoom | Click to select
+      </span>
+    </div>
+  )
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +97,7 @@ export default function App() {
   }, [])
 
   return (
+    <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
       <div style={{ width: '100%', height: '100%', position: 'relative' }} className={aboutOpen || exoplanetsOpen || compareOpen ? 'overlay-active' : ''}>
         <Canvas
@@ -71,6 +116,7 @@ export default function App() {
           </Suspense>
         </Canvas>
         <TopBar onOpenAbout={() => setAboutOpen(true)} onOpenExoplanets={() => setExoplanetsOpen(true)} />
+        <InteractionHint />
         <TimeSlider />
         <DataPanel />
         <APODCard />
@@ -83,5 +129,6 @@ export default function App() {
         <ComparisonView open={compareOpen} onClose={() => setCompareOpen(false)} initialId={compareInitialId} />
       </div>
     </QueryClientProvider>
+    </ErrorBoundary>
   )
 }

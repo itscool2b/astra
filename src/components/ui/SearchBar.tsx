@@ -151,7 +151,7 @@ export function SearchBar() {
             setOpen(true)
           }}
           onFocus={() => setOpen(true)}
-          placeholder="Search or browse..."
+          placeholder="Search or browse (/)"
           style={{
             flex: 1,
             background: 'none',

@@ -34,10 +34,8 @@ export function ISSPanel() {
 
       <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <p style={{ fontSize: 13, lineHeight: 1.6, color: 'rgba(255,255,255,0.7)' }}>
-          The International Space Station is a modular space station in low Earth orbit. It is the
-          largest artificial object in space and the largest satellite in orbit, regularly visible to
-          the naked eye from Earth's surface. The ISS maintains an orbit at approximately 408 km
-          altitude, completing about 15.5 orbits per day.
+          The largest artificial object in space, orbiting Earth at roughly 408 km altitude and
+          completing about 15.5 orbits per day. Regularly visible to the naked eye from the ground.
         </p>
       </div>
 

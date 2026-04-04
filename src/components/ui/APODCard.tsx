@@ -3,8 +3,32 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useAPOD } from '../../api/hooks'
 
 export function APODCard() {
-  const { data: apod, isLoading } = useAPOD()
+  const { data: apod, isLoading, isError } = useAPOD()
   const [expanded, setExpanded] = useState(false)
+
+  if (isError) {
+    return (
+      <div
+        style={{
+          position: 'absolute',
+          bottom: 120,
+          left: 24,
+          background: 'rgba(255,255,255,0.05)',
+          backdropFilter: 'blur(12px)',
+          borderRadius: 14,
+          padding: 12,
+          width: 280,
+          zIndex: 10,
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}
+      >
+        <div style={{ fontSize: 9, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.4)', marginBottom: 6 }}>
+          Photo of the Day
+        </div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>Photo unavailable</div>
+      </div>
+    )
+  }
 
   if (isLoading || !apod) return null
 
@@ -67,7 +91,7 @@ export function APODCard() {
               inset: 0,
               background: 'rgba(0,0,0,0.85)',
               backdropFilter: 'blur(8px)',
-              zIndex: 100,
+              zIndex: 150,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

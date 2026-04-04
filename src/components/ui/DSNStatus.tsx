@@ -42,7 +42,7 @@ export function DSNStatus() {
         position: 'absolute',
         bottom: 110,
         right: 16,
-        zIndex: 15,
+        zIndex: 10,
         maxWidth: 300,
         background: 'rgba(8,8,24,0.88)',
         backdropFilter: 'blur(12px)',

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useStore } from '../../store/useStore'
 import { PlanetPanel } from './panels/PlanetPanel'
@@ -14,7 +15,13 @@ export function DataPanel() {
   const selectedObject = useStore((s) => s.selectedObject)
   const panelOpen = useStore((s) => s.panelOpen)
   const selectObject = useStore((s) => s.selectObject)
-  const isMobile = window.innerWidth <= 768
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768)
+
+  useEffect(() => {
+    const handler = () => setIsMobile(window.innerWidth <= 768)
+    window.addEventListener('resize', handler)
+    return () => window.removeEventListener('resize', handler)
+  }, [])
 
   return (
     <AnimatePresence>

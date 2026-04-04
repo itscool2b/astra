@@ -258,7 +258,7 @@ function PlanetPhotos({ planetName }: { planetName: string }) {
           style={{
             position: 'fixed',
             inset: 0,
-            zIndex: 300,
+            zIndex: 150,
             background: 'rgba(0,0,0,0.85)',
             display: 'flex',
             alignItems: 'center',
