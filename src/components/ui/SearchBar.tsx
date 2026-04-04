@@ -3,6 +3,7 @@ import Fuse from 'fuse.js'
 import { PLANETS } from '../../data/planets'
 import { DWARF_PLANETS } from '../../data/dwarfPlanets'
 import { MOONS } from '../../data/moons'
+import { SPACECRAFT } from '../../data/spacecraft'
 import { useStore, type CelestialTarget } from '../../store/useStore'
 import type { SearchableObject } from '../../data/types'
 
@@ -17,6 +18,7 @@ const allObjects: SearchableObject[] = [
     parentId: m.parentId,
     parentName: PLANETS.find((p) => p.id === m.parentId)?.name || m.parentId,
   })),
+  ...SPACECRAFT.map((s) => ({ id: s.id, name: s.name, type: 'spacecraft' as const })),
 ]
 
 const fuse = new Fuse(allObjects, {

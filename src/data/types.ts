@@ -89,7 +89,7 @@ export interface DwarfPlanetData {
 export interface SearchableObject {
   id: string
   name: string
-  type: 'star' | 'planet' | 'dwarf-planet' | 'moon' | 'asteroid'
+  type: 'star' | 'planet' | 'dwarf-planet' | 'moon' | 'asteroid' | 'spacecraft'
   parentId?: string
   parentName?: string
 }

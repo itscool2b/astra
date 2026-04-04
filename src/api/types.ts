@@ -88,3 +88,10 @@ export interface EONETEvent {
   sources: { id: string; url: string }[]
   geometry: { date: string; type: string; coordinates: [number, number] }[]
 }
+
+export interface SpacecraftPosition {
+  x: number  // AU, heliocentric
+  y: number
+  z: number
+  name: string
+}

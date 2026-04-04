@@ -6,7 +6,7 @@ export type QualityTier = 'high' | 'medium' | 'low'
 export interface CelestialTarget {
   id: string
   name: string
-  type: 'star' | 'planet' | 'dwarf-planet' | 'moon' | 'asteroid' | 'comet'
+  type: 'star' | 'planet' | 'dwarf-planet' | 'moon' | 'asteroid' | 'comet' | 'spacecraft'
   parentId?: string
 }
 

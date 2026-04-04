@@ -6,6 +6,7 @@ import { MarsPanel } from './panels/MarsPanel'
 import { SunPanel } from './panels/SunPanel'
 import { DwarfPlanetPanel } from './panels/DwarfPlanetPanel'
 import { MoonPanel } from './panels/MoonPanel'
+import { SpacecraftPanel } from './panels/SpacecraftPanel'
 
 export function DataPanel() {
   const selectedObject = useStore((s) => s.selectedObject)
@@ -96,8 +97,9 @@ export function DataPanel() {
           {selectedObject.type === 'star' && <SunPanel />}
           {selectedObject.type === 'moon' && <MoonPanel id={selectedObject.id} />}
           {selectedObject.type === 'dwarf-planet' && <DwarfPlanetPanel id={selectedObject.id} />}
+          {selectedObject.type === 'spacecraft' && <SpacecraftPanel id={selectedObject.id} />}
           {selectedObject.type === 'asteroid' && (
-            <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)' }}>Asteroid panel (coming soon)</div>
+            <div style={{ padding: 20, color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Asteroid data</div>
           )}
         </motion.div>
       )}

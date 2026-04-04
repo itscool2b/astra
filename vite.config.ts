@@ -82,6 +82,14 @@ function nasaDevProxy(): Plugin {
               break
             }
 
+            case 'horizons': {
+              const id = parsed.searchParams.get('id') || '-170'
+              const today = new Date().toISOString().split('T')[0]
+              const tomorrow = new Date(Date.now() + 86400000).toISOString().split('T')[0]
+              targetUrl = `https://ssd.jpl.nasa.gov/api/horizons.api?format=json&COMMAND='${id}'&OBJ_DATA=NO&MAKE_EPHEM=YES&EPHEM_TYPE=VECTORS&CENTER='500@10'&START_TIME='${today}'&STOP_TIME='${tomorrow}'&STEP_SIZE='1d'`
+              break
+            }
+
             case 'nasa-images': {
               const q = parsed.searchParams.get('q') || ''
               if (!q) {

@@ -98,6 +98,38 @@ export function useNASAImages(query: string) {
   })
 }
 
+// --- Spacecraft (JPL Horizons) ---
+export function useSpacecraftPosition(horizonsId: string) {
+  return useQuery({
+    queryKey: ['spacecraft', horizonsId],
+    queryFn: async () => {
+      const res = await fetchApi<{ result: string }>('/horizons', { id: horizonsId })
+      // Parse the Horizons text response for X,Y,Z vector
+      const text = res.result
+      const lines = text.split('\n')
+      const soeIdx = lines.findIndex(l => l.includes('$$SOE'))
+      const eoeIdx = lines.findIndex(l => l.includes('$$EOE'))
+      if (soeIdx === -1 || eoeIdx === -1) throw new Error('No ephemeris data')
+      // Data lines are between SOE and EOE
+      // Format: JDTDB, then X Y Z on next line, then VX VY VZ, then LT RG RR
+      const dataLines = lines.slice(soeIdx + 1, eoeIdx).filter(l => l.trim())
+      // The position line has X, Y, Z values
+      // Lines: [0]=JDTDB, [1]=X Y Z, [2]=VX VY VZ, [3]=LT RG RR
+      if (dataLines.length < 2) throw new Error('Insufficient data')
+      const posLine = dataLines[1].trim()
+      const parts = posLine.split(/\s+/).map(Number)
+      // Horizons outputs in km, convert to AU
+      const kmToAu = 1 / 1.496e8
+      return {
+        x: parts[0] * kmToAu,
+        y: parts[1] * kmToAu,
+        z: parts[2] * kmToAu,
+      }
+    },
+    staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
 // --- EONET ---
 export function useEONET() {
   return useQuery({
