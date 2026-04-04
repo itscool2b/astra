@@ -255,7 +255,7 @@ export function AboutPage({ open, onClose }: AboutPageProps) {
               <p style={styles.paragraph}>
                 Every frame, the app solves <strong style={{ color: 'rgba(255,255,255,0.85)' }}>Kepler's equation</strong> using
                 Newton-Raphson iteration to compute each body's exact position at the current time.
-                This means the time slider (1900–2100) shows where planets actually were or will be.
+                This means the positions you see are where the planets actually are right now.
               </p>
               <div style={styles.infoBox}>
                 <strong>Scale modes:</strong> In <em>Compressed</em> mode, distances are logarithmically
