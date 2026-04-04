@@ -204,6 +204,232 @@ function TESSModel({ radius }: { radius: number }) {
   )
 }
 
+/** Parker Solar Probe -- flat disc heat shield + small box body behind it */
+function ParkerModel({ radius }: { radius: number }) {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = clock.getElapsedTime() * 0.2
+    }
+  })
+
+  const shieldRadius = radius * 1.4
+  const bodySize = radius * 0.5
+
+  return (
+    <group ref={groupRef}>
+      {/* Heat shield -- flat disc facing forward */}
+      <mesh position={[0, radius * 0.3, 0]} rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[shieldRadius, shieldRadius, shieldRadius * 0.04, 24]} />
+        <meshStandardMaterial
+          color="#ff6600"
+          emissive="#ff6600"
+          emissiveIntensity={0.5}
+          roughness={0.3}
+          metalness={0.7}
+        />
+      </mesh>
+
+      {/* Spacecraft body -- small box behind the shield */}
+      <mesh position={[0, -radius * 0.3, 0]}>
+        <boxGeometry args={[bodySize, bodySize * 1.2, bodySize]} />
+        <meshStandardMaterial
+          color="#444444"
+          emissive="#444444"
+          emissiveIntensity={0.3}
+          roughness={0.6}
+          metalness={0.5}
+        />
+      </mesh>
+    </group>
+  )
+}
+
+/** Juno -- central cylinder + 3 rectangular solar panels at 120-degree spacing */
+function JunoModel({ radius }: { radius: number }) {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = clock.getElapsedTime() * 0.25
+    }
+  })
+
+  const bodyRadius = radius * 0.4
+  const bodyHeight = radius * 0.8
+  const panelWidth = radius * 1.8
+  const panelHeight = radius * 0.5
+
+  return (
+    <group ref={groupRef}>
+      {/* Central cylinder body */}
+      <mesh>
+        <cylinderGeometry args={[bodyRadius, bodyRadius, bodyHeight, 12]} />
+        <meshStandardMaterial
+          color="#555555"
+          emissive="#555555"
+          emissiveIntensity={0.3}
+          roughness={0.5}
+          metalness={0.6}
+        />
+      </mesh>
+
+      {/* 3 solar panels at 120-degree intervals */}
+      {[0, (2 * Math.PI) / 3, (4 * Math.PI) / 3].map((angle, i) => (
+        <mesh
+          key={i}
+          position={[
+            Math.cos(angle) * (bodyRadius + panelWidth * 0.5),
+            0,
+            Math.sin(angle) * (bodyRadius + panelWidth * 0.5),
+          ]}
+          rotation={[0, -angle, 0]}
+        >
+          <planeGeometry args={[panelWidth, panelHeight]} />
+          <meshStandardMaterial
+            color="#99cc33"
+            emissive="#99cc33"
+            emissiveIntensity={0.4}
+            roughness={0.3}
+            metalness={0.5}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+/** New Horizons -- flat triangular prism body + cone dish on top */
+function NewHorizonsModel({ radius }: { radius: number }) {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = clock.getElapsedTime() * 0.14
+    }
+  })
+
+  const bodySize = radius * 0.8
+  const dishRadius = radius * 0.6
+  const dishHeight = radius * 0.5
+
+  return (
+    <group ref={groupRef}>
+      {/* Flat triangular prism body */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[bodySize, bodySize, bodySize * 0.2, 3]} />
+        <meshStandardMaterial
+          color="#444444"
+          emissive="#444444"
+          emissiveIntensity={0.3}
+          roughness={0.5}
+          metalness={0.6}
+        />
+      </mesh>
+
+      {/* Dish cone on top */}
+      <mesh position={[0, radius * 0.4, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[dishRadius, dishHeight, 16]} />
+        <meshStandardMaterial
+          color="#cc88ff"
+          emissive="#cc88ff"
+          emissiveIntensity={0.4}
+          roughness={0.3}
+          metalness={0.5}
+        />
+      </mesh>
+    </group>
+  )
+}
+
+/** OSIRIS-APEX -- box body + 2 extending solar panel planes + small sphere on arm */
+function OSIRISAPEXModel({ radius }: { radius: number }) {
+  const groupRef = useRef<THREE.Group>(null)
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = clock.getElapsedTime() * 0.16
+    }
+  })
+
+  const bodySize = radius * 0.6
+  const panelWidth = radius * 1.3
+  const panelHeight = radius * 0.6
+  const armLength = radius * 1.0
+  const armRadius = radius * 0.05
+  const capsuleRadius = radius * 0.2
+
+  return (
+    <group ref={groupRef}>
+      {/* Box body */}
+      <mesh>
+        <boxGeometry args={[bodySize, bodySize, bodySize]} />
+        <meshStandardMaterial
+          color="#444444"
+          emissive="#444444"
+          emissiveIntensity={0.3}
+          roughness={0.6}
+          metalness={0.5}
+        />
+      </mesh>
+
+      {/* Left solar panel */}
+      <mesh position={[-(bodySize * 0.5 + panelWidth * 0.5), 0, 0]}>
+        <planeGeometry args={[panelWidth, panelHeight]} />
+        <meshStandardMaterial
+          color="#1a2a6c"
+          emissive="#1a2a6c"
+          emissiveIntensity={0.4}
+          roughness={0.3}
+          metalness={0.6}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Right solar panel */}
+      <mesh position={[bodySize * 0.5 + panelWidth * 0.5, 0, 0]}>
+        <planeGeometry args={[panelWidth, panelHeight]} />
+        <meshStandardMaterial
+          color="#1a2a6c"
+          emissive="#1a2a6c"
+          emissiveIntensity={0.4}
+          roughness={0.3}
+          metalness={0.6}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+
+      {/* Sample arm -- thin cylinder extending upward */}
+      <mesh
+        position={[0, bodySize * 0.5 + armLength * 0.5, 0]}
+      >
+        <cylinderGeometry args={[armRadius, armRadius, armLength, 8]} />
+        <meshStandardMaterial
+          color="#555555"
+          emissive="#555555"
+          emissiveIntensity={0.2}
+          roughness={0.7}
+          metalness={0.4}
+        />
+      </mesh>
+
+      {/* Sample capsule sphere at end of arm */}
+      <mesh position={[0, bodySize * 0.5 + armLength + capsuleRadius, 0]}>
+        <sphereGeometry args={[capsuleRadius, 12, 12]} />
+        <meshStandardMaterial
+          color="#ff4488"
+          emissive="#ff4488"
+          emissiveIntensity={0.5}
+          roughness={0.3}
+          metalness={0.5}
+        />
+      </mesh>
+    </group>
+  )
+}
+
 /* ------------------------------------------------------------------ */
 /*  Spacecraft component                                               */
 /* ------------------------------------------------------------------ */
@@ -214,6 +440,7 @@ interface SpacecraftProps {
 
 export function Spacecraft({ data }: SpacecraftProps) {
   const groupRef = useRef<THREE.Group>(null)
+  const velocityLineRef = useRef<THREE.Line>(null)
   const [hovered, setHovered] = useState(false)
 
   const scaleMode = useStore((s) => s.scaleMode)
@@ -232,6 +459,22 @@ export function Spacecraft({ data }: SpacecraftProps) {
     [data.id, data.name]
   )
 
+  // Geometry for velocity direction line (2 points)
+  const velocityGeom = useMemo(() => {
+    const geom = new THREE.BufferGeometry()
+    const positions = new Float32Array(6) // 2 points x 3 components
+    geom.setAttribute('position', new THREE.BufferAttribute(positions, 3))
+    return geom
+  }, [])
+
+  const velocityMaterial = useMemo(() => {
+    return new THREE.LineBasicMaterial({
+      color: data.color,
+      transparent: true,
+      opacity: 0.3,
+    })
+  }, [data.color])
+
   useFrame(() => {
     if (!groupRef.current || !position) return
 
@@ -242,6 +485,22 @@ export function Spacecraft({ data }: SpacecraftProps) {
     )
 
     bodyPositions.set(data.id, groupRef.current.position, radius)
+
+    // Update velocity direction line
+    if (velocityLineRef.current && position.speed > 0) {
+      const posAttr = velocityGeom.getAttribute('position') as THREE.BufferAttribute
+      // Start at origin (relative to group)
+      posAttr.setXYZ(0, 0, 0, 0)
+      // End: normalized velocity * visual length, mapped to scene coords
+      const len = radius * 4
+      const invSpeed = 1 / position.speed
+      posAttr.setXYZ(1,
+        position.vx * invSpeed * len,
+        position.vz * invSpeed * len,  // ecliptic Z -> scene Y
+        position.vy * invSpeed * len,  // ecliptic Y -> scene Z
+      )
+      posAttr.needsUpdate = true
+    }
   })
 
   const handleClick = useCallback(
@@ -281,6 +540,14 @@ export function Spacecraft({ data }: SpacecraftProps) {
         return <VoyagerModel radius={radius} />
       case 'tess':
         return <TESSModel radius={radius} />
+      case 'parker':
+        return <ParkerModel radius={radius} />
+      case 'juno':
+        return <JunoModel radius={radius} />
+      case 'newhorizons':
+        return <NewHorizonsModel radius={radius} />
+      case 'osirisapex':
+        return <OSIRISAPEXModel radius={radius} />
       default:
         // Fallback octahedron for any unknown spacecraft
         return (
@@ -313,6 +580,9 @@ export function Spacecraft({ data }: SpacecraftProps) {
 
       {/* Procedural spacecraft model */}
       {renderModel()}
+
+      {/* Velocity direction line */}
+      <primitive object={new THREE.Line(velocityGeom, velocityMaterial)} ref={velocityLineRef} />
 
       {/* Hover/selection glow */}
       {(hovered || isSelected) && (

@@ -62,6 +62,12 @@ export function EarthPanel() {
             {events.slice(0, 10).map((event) => {
               const category = event.categories[0]?.id || 'unknown'
               const color = CATEGORY_COLORS[category] || '#888'
+              const geoCount = event.geometry.length
+              const firstDate = geoCount > 0 ? new Date(event.geometry[0].date) : null
+              const lastDate = geoCount > 1 ? new Date(event.geometry[geoCount - 1].date) : null
+              const durationDays = firstDate && lastDate
+                ? Math.max(0, Math.round((lastDate.getTime() - firstDate.getTime()) / 86400000))
+                : null
               return (
                 <div
                   key={event.id}
@@ -70,18 +76,49 @@ export function EarthPanel() {
                     border: `1px solid ${color}30`,
                     borderRadius: 8,
                     padding: '8px 10px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
                   }}
                 >
-                  <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
-                  <div>
-                    <div style={{ fontSize: 11, fontWeight: 500 }}>{event.title}</div>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
-                      {event.categories[0]?.title}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 500 }}>{event.title}</div>
+                      <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
+                        {event.categories[0]?.title}
+                      </div>
                     </div>
                   </div>
+                  {event.description && (
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginTop: 4, lineHeight: 1.4 }}>
+                      {event.description}
+                    </div>
+                  )}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 5, fontSize: 10 }}>
+                    {geoCount > 1 && (
+                      <span style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        Tracked at {geoCount} locations
+                      </span>
+                    )}
+                    {durationDays !== null && durationDays > 0 && (
+                      <span style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        {durationDays}d duration
+                      </span>
+                    )}
+                  </div>
+                  {event.sources.length > 0 && (
+                    <div style={{ display: 'flex', gap: 6, marginTop: 4 }}>
+                      {event.sources.map((src) => (
+                        <a
+                          key={src.id}
+                          href={src.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ fontSize: 10, color: '#4a90d9', textDecoration: 'none' }}
+                        >
+                          {src.id}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             })}

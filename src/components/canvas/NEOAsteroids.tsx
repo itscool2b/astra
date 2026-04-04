@@ -87,6 +87,18 @@ function computeNEOPosition(
   return [x, y, z]
 }
 
+function diameterScale(neo: NEOData): number {
+  const d = neo.estimated_diameter.kilometers
+  const avgKm = (d.estimated_diameter_min + d.estimated_diameter_max) / 2
+  // Scale: 0.01 km -> 0.04, 0.1 km -> 0.08, 1 km -> 0.16, 10 km -> 0.32
+  return Math.max(0.03, Math.min(0.4, 0.08 + Math.log10(Math.max(avgKm, 0.001)) * 0.06))
+}
+
+function magnitudeEmissive(mag: number): number {
+  // Linear scale: mag 20 = 0.2, mag 25 = 0.5, mag 30 = 0.8
+  return Math.max(0.1, Math.min(1.0, 0.2 + (mag - 20) * 0.06))
+}
+
 function NEOMarker({ data, jd, scaleMode }: { data: NEOWithOrbit; jd: number; scaleMode: string }) {
   const meshRef = useRef<THREE.Mesh>(null)
   const selectObject = useStore((s) => s.selectObject)
@@ -95,6 +107,9 @@ function NEOMarker({ data, jd, scaleMode }: { data: NEOWithOrbit; jd: number; sc
   const isHazardous = data.neo.is_potentially_hazardous_asteroid
   const color = isHazardous ? '#ff4444' : '#ffcc44'
   const emissiveColor = isHazardous ? '#ff0000' : '#ffaa00'
+
+  const meshRadius = useMemo(() => diameterScale(data.neo), [data.neo])
+  const emissiveIntensity = useMemo(() => magnitudeEmissive(data.neo.absolute_magnitude_h), [data.neo])
 
   const target: CelestialTarget = useMemo(() => ({
     id: `neo-${data.neo.id}`,
@@ -122,11 +137,11 @@ function NEOMarker({ data, jd, scaleMode }: { data: NEOWithOrbit; jd: number; sc
 
   return (
     <mesh ref={meshRef} onClick={handleClick}>
-      <sphereGeometry args={[0.08, 8, 8]} />
+      <sphereGeometry args={[meshRadius, 8, 8]} />
       <meshStandardMaterial
         color={color}
         emissive={emissiveColor}
-        emissiveIntensity={0.8}
+        emissiveIntensity={emissiveIntensity}
         roughness={0.4}
       />
     </mesh>

@@ -5,8 +5,12 @@ import type {
   EPICImage,
   DONKICME,
   DONKIFlare,
+  DONKIStorm,
+  DONKISEP,
+  DONKIIPS,
   EONETEvent,
   NEOData,
+  ExoplanetData,
 } from './types'
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || '/api'
@@ -81,6 +85,30 @@ export function useDONKIFlares() {
   })
 }
 
+export function useDONKIStorms() {
+  return useQuery({
+    queryKey: ['donki-gst'],
+    queryFn: () => fetchApi<DONKIStorm[]>('/donki', { type: 'GST' }),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
+export function useDONKISEP() {
+  return useQuery({
+    queryKey: ['donki-sep'],
+    queryFn: () => fetchApi<DONKISEP[]>('/donki', { type: 'SEP' }),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
+export function useDONKIIPS() {
+  return useQuery({
+    queryKey: ['donki-ips'],
+    queryFn: () => fetchApi<DONKIIPS[]>('/donki', { type: 'IPS' }),
+    staleTime: 30 * 60 * 1000,
+  })
+}
+
 // --- NASA Image Library ---
 export function useNASAImages(query: string) {
   return useQuery({
@@ -115,21 +143,43 @@ export function useSpacecraftPosition(horizonsId: string) {
       const dataLines = lines.slice(soeIdx + 1, eoeIdx).filter(l => l.trim())
       // The position line has X, Y, Z values
       // Lines: [0]=JDTDB, [1]=X Y Z, [2]=VX VY VZ, [3]=LT RG RR
-      if (dataLines.length < 2) throw new Error('Insufficient data')
+      if (dataLines.length < 3) throw new Error('Insufficient data')
       // Format: "X =-1.462E+08 Y =-3.667E+07 Z = 2.006E+05"
       const posLine = dataLines[1].trim()
       const xMatch = posLine.match(/X\s*=\s*([-\d.E+]+)/i)
       const yMatch = posLine.match(/Y\s*=\s*([-\d.E+]+)/i)
       const zMatch = posLine.match(/Z\s*=\s*([-\d.E+]+)/i)
       if (!xMatch || !yMatch || !zMatch) throw new Error('Could not parse position')
+      // Parse velocity line: "VX= ... VY= ... VZ= ..."
+      const velLine = dataLines[2].trim()
+      const vxMatch = velLine.match(/VX\s*=\s*([-\d.E+]+)/i)
+      const vyMatch = velLine.match(/VY\s*=\s*([-\d.E+]+)/i)
+      const vzMatch = velLine.match(/VZ\s*=\s*([-\d.E+]+)/i)
+      const vx = vxMatch ? parseFloat(vxMatch[1]) : 0
+      const vy = vyMatch ? parseFloat(vyMatch[1]) : 0
+      const vz = vzMatch ? parseFloat(vzMatch[1]) : 0
+      const speed = Math.sqrt(vx * vx + vy * vy + vz * vz)
       // Horizons outputs in km, convert to AU
       const kmToAu = 1 / 1.496e8
       return {
         x: parseFloat(xMatch[1]) * kmToAu,
         y: parseFloat(yMatch[1]) * kmToAu,
         z: parseFloat(zMatch[1]) * kmToAu,
+        vx,
+        vy,
+        vz,
+        speed,
       }
     },
+    staleTime: 24 * 60 * 60 * 1000,
+  })
+}
+
+// --- SBDB Close Approaches ---
+export function useCloseApproaches() {
+  return useQuery({
+    queryKey: ['close-approaches'],
+    queryFn: () => fetchApi<{ count: string; data: string[][] }>('/cad'),
     staleTime: 24 * 60 * 60 * 1000,
   })
 }
@@ -155,10 +205,28 @@ export function useISSPosition() {
 }
 
 // --- DSN Status ---
+export interface DSNSignal {
+  direction: 'up' | 'down'
+  dataRate: number | null
+}
+
 export interface DSNDish {
   dish: string
   targets: string[]
   complex: string
+  azimuthAngle: number | null
+  elevationAngle: number | null
+  signals: DSNSignal[]
+}
+
+function detectComplex(dishName: string): string {
+  const match = dishName.match(/DSS-?(\d+)/i)
+  if (!match) return 'Unknown'
+  const num = parseInt(match[1], 10)
+  if (num >= 10 && num < 30) return 'Goldstone'
+  if (num >= 30 && num < 50) return 'Canberra'
+  if (num >= 50 && num < 70) return 'Madrid'
+  return 'Unknown'
 }
 
 export function useDSNStatus() {
@@ -174,18 +242,52 @@ export function useDSNStatus() {
       dishes.forEach(dish => {
         const name = dish.getAttribute('name') || ''
         const friendlyName = dish.getAttribute('friendlyName') || name
+        const azStr = dish.getAttribute('azimuthAngle')
+        const elStr = dish.getAttribute('elevationAngle')
         const targets: string[] = []
         dish.querySelectorAll('target').forEach(t => {
           const tName = t.getAttribute('name')
           if (tName && tName !== '' && tName !== 'NONE') targets.push(tName)
         })
+        // Parse signals
+        const signals: DSNSignal[] = []
+        dish.querySelectorAll('downSignal').forEach(sig => {
+          const rateStr = sig.getAttribute('dataRate')
+          signals.push({
+            direction: 'down',
+            dataRate: rateStr ? parseFloat(rateStr) : null,
+          })
+        })
+        dish.querySelectorAll('upSignal').forEach(sig => {
+          const rateStr = sig.getAttribute('dataRate')
+          signals.push({
+            direction: 'up',
+            dataRate: rateStr ? parseFloat(rateStr) : null,
+          })
+        })
         if (targets.length > 0) {
-          result.push({ dish: friendlyName || name, targets, complex: '' })
+          result.push({
+            dish: friendlyName || name,
+            targets,
+            complex: detectComplex(name),
+            azimuthAngle: azStr ? parseFloat(azStr) : null,
+            elevationAngle: elStr ? parseFloat(elStr) : null,
+            signals,
+          })
         }
       })
       return result
     },
     refetchInterval: 30000,
     staleTime: 15000,
+  })
+}
+
+// --- Exoplanet Archive ---
+export function useExoplanets() {
+  return useQuery({
+    queryKey: ['exoplanets'],
+    queryFn: () => fetchApi<ExoplanetData[]>('/exoplanets'),
+    staleTime: 7 * 24 * 60 * 60 * 1000,
   })
 }

@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { PLANET_MAP } from '../../../data/planets'
 import { MOONS_BY_PARENT } from '../../../data/moons'
 import { useStore, type CelestialTarget } from '../../../store/useStore'
+import { useNASAImages } from '../../../api/hooks'
 
 interface StatProps {
   label: string
@@ -133,7 +135,7 @@ export function PlanetPanel({ id }: { id: string }) {
 
       {/* Moons */}
       {moons.length > 0 && (
-        <div style={{ padding: '16px 20px' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
           <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>
             Moons ({moons.length})
           </div>
@@ -166,6 +168,114 @@ export function PlanetPanel({ id }: { id: string }) {
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Photos */}
+      <PlanetPhotos planetName={planet.name} />
+    </div>
+  )
+}
+
+function PlanetPhotos({ planetName }: { planetName: string }) {
+  const { data, isLoading } = useNASAImages(planetName + ' planet')
+  const [fullImage, setFullImage] = useState<string | null>(null)
+
+  const items = data?.collection?.items?.filter(
+    item => item.links && item.links.length > 0 && item.data && item.data.length > 0
+  ).slice(0, 6) ?? []
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: '16px 20px' }}>
+        <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>Photos</div>
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', padding: '8px 0' }}>
+          Loading photos...
+        </div>
+      </div>
+    )
+  }
+
+  if (items.length === 0) return null
+
+  return (
+    <div style={{ padding: '16px 20px' }}>
+      <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 10 }}>Photos</div>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: 8,
+      }}>
+        {items.map((item, i) => {
+          const thumb = item.links![0].href
+          const title = item.data[0].title
+          return (
+            <div
+              key={i}
+              onClick={() => setFullImage(thumb)}
+              style={{
+                cursor: 'pointer',
+                borderRadius: 8,
+                overflow: 'hidden',
+                border: '1px solid rgba(255,255,255,0.06)',
+                transition: 'border-color 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)' }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)' }}
+            >
+              <img
+                src={thumb}
+                alt={title}
+                style={{
+                  width: '100%',
+                  height: 80,
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+                loading="lazy"
+              />
+              <div style={{
+                padding: '6px 8px',
+                fontSize: 10,
+                color: 'rgba(255,255,255,0.5)',
+                lineHeight: 1.3,
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                background: 'rgba(0,0,0,0.3)',
+              }}>
+                {title}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Full image overlay */}
+      {fullImage && (
+        <div
+          onClick={() => setFullImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 300,
+            background: 'rgba(0,0,0,0.85)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          <img
+            src={fullImage}
+            alt="Full size"
+            style={{
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              objectFit: 'contain',
+              borderRadius: 8,
+            }}
+          />
         </div>
       )}
     </div>

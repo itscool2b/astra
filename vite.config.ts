@@ -82,6 +82,11 @@ function nasaDevProxy(): Plugin {
               break
             }
 
+            case 'cad': {
+              targetUrl = 'https://ssd-api.jpl.nasa.gov/cad.api?dist-max=10LD&date-min=now&date-max=%2B60&sort=dist'
+              break
+            }
+
             case 'horizons': {
               const id = parsed.searchParams.get('id') || '-170'
               const today = new Date().toISOString().split('T')[0]
@@ -109,6 +114,12 @@ function nasaDevProxy(): Plugin {
 
             case 'dsn': {
               targetUrl = 'https://eyes.nasa.gov/dsn/data/dsn.xml'
+              break
+            }
+
+            case 'exoplanets': {
+              const query = "SELECT+pl_name,hostname,disc_year,discoverymethod,pl_orbper,pl_rade,pl_bmasse,pl_eqt,sy_dist,pl_orbsmax,st_spectype,st_teff+FROM+pscomppars+WHERE+default_flag=1&format=json"
+              targetUrl = `https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=${query}`
               break
             }
 

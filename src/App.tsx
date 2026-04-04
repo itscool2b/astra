@@ -8,9 +8,11 @@ import { TopBar } from './components/ui/TopBar'
 import { TimeSlider } from './components/ui/TimeSlider'
 import { DataPanel } from './components/ui/DataPanel'
 import { APODCard } from './components/ui/APODCard'
+import { CloseApproachWidget } from './components/ui/CloseApproachWidget'
 import { SpaceHUD } from './components/ui/SpaceHUD'
 import { LoadingScreen } from './components/ui/LoadingScreen'
 import { AboutPage } from './components/ui/AboutPage'
+import { ExoplanetBrowser } from './components/ui/ExoplanetBrowser'
 import { DSNStatus } from './components/ui/DSNStatus'
 
 const queryClient = new QueryClient({
@@ -26,6 +28,7 @@ export default function App() {
   useTimeLoop()
   useAdaptiveQuality()
   const [aboutOpen, setAboutOpen] = useState(false)
+  const [exoplanetsOpen, setExoplanetsOpen] = useState(false)
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -45,14 +48,16 @@ export default function App() {
             <Scene />
           </Suspense>
         </Canvas>
-        <TopBar onOpenAbout={() => setAboutOpen(true)} />
+        <TopBar onOpenAbout={() => setAboutOpen(true)} onOpenExoplanets={() => setExoplanetsOpen(true)} />
         <TimeSlider />
         <DataPanel />
         <APODCard />
+        <CloseApproachWidget />
         <SpaceHUD />
         <DSNStatus />
         <LoadingScreen />
         <AboutPage open={aboutOpen} onClose={() => setAboutOpen(false)} />
+        <ExoplanetBrowser open={exoplanetsOpen} onClose={() => setExoplanetsOpen(false)} />
       </div>
     </QueryClientProvider>
   )

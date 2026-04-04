@@ -67,6 +67,21 @@ export function EarthMarkers({ radius }: EarthMarkersProps) {
       })
   }, [events, radius])
 
+  const migrationLines = useMemo(() => {
+    if (!events) return []
+    return events
+      .filter((e) => e.geometry.length > 1)
+      .slice(0, 40)
+      .map((evt) => {
+        const color = getCategoryColor(evt.categories)
+        const points = evt.geometry.map((g) => {
+          const [lon, lat] = g.coordinates
+          return latLonToPosition(lat, lon, radius * 1.025)
+        })
+        return { id: evt.id, points, color }
+      })
+  }, [events, radius])
+
   if (markers.length === 0) return null
 
   return (
@@ -81,6 +96,14 @@ export function EarthMarkers({ radius }: EarthMarkersProps) {
           />
         </mesh>
       ))}
+      {migrationLines.map((line) => {
+        const geometry = new THREE.BufferGeometry().setFromPoints(line.points)
+        const material = new THREE.LineBasicMaterial({ color: line.color, transparent: true, opacity: 0.6 })
+        const lineObj = new THREE.Line(geometry, material)
+        return (
+          <primitive key={`line-${line.id}`} object={lineObj} />
+        )
+      })}
     </group>
   )
 }

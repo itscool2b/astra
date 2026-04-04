@@ -110,6 +110,7 @@ const OBJECTS = [
   { type: 'Moons', count: 20, examples: 'Moon, Io, Europa, Titan, Triton, Charon, and more' },
   { type: 'Asteroid Belt', count: 3000, examples: 'Procedural rocks between Mars and Jupiter' },
   { type: 'NEO Asteroids', count: 'Live', examples: 'Real tracked near-Earth objects from NASA' },
+  { type: 'Spacecraft', count: 8, examples: 'JWST, Voyager 1 & 2, TESS, Parker Solar Probe, Juno, New Horizons, OSIRIS-APEX' },
 ]
 
 export function AboutPage({ open, onClose }: AboutPageProps) {

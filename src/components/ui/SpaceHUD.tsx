@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useEONET, useDONKIFlares, useNEOFeed } from '../../api/hooks'
+import { useEONET, useDONKIFlares, useNEOFeed, useDONKIStorms, useDONKISEP } from '../../api/hooks'
 
 function getCategoryLabel(categories: { id: string; title: string }[]): string {
   const title = (categories[0]?.title ?? '').toLowerCase()
@@ -32,6 +32,8 @@ export function SpaceHUD() {
   const { data: eonetEvents } = useEONET()
   const { data: flares } = useDONKIFlares()
   const { data: neoData } = useNEOFeed()
+  const { data: storms } = useDONKIStorms()
+  const { data: sep } = useDONKISEP()
 
   const tickerItems = useMemo(() => {
     const items: string[] = []
@@ -48,6 +50,22 @@ export function SpaceHUD() {
     if (flares) {
       for (const flare of flares.slice(0, 5)) {
         items.push(`FLR ${flare.classType} | ${timeAgo(flare.peakTime || flare.beginTime)}`)
+      }
+    }
+
+    // DONKI storms
+    if (storms) {
+      for (const storm of storms.slice(0, 3)) {
+        const maxKp = storm.allKpIndex?.reduce((max, kp) => Math.max(max, kp.kpIndex), 0) ?? 0
+        items.push(`GST Kp${maxKp} | ${timeAgo(storm.startTime)}`)
+      }
+    }
+
+    // DONKI solar energetic particles
+    if (sep) {
+      for (const event of sep.slice(0, 3)) {
+        const instrument = event.instruments?.[0]?.displayName ?? 'unknown'
+        items.push(`SEP | ${instrument} | ${timeAgo(event.eventTime)}`)
       }
     }
 
@@ -73,7 +91,7 @@ export function SpaceHUD() {
     }
 
     return items
-  }, [eonetEvents, flares, neoData])
+  }, [eonetEvents, flares, neoData, storms, sep])
 
   const activity = useMemo(() => {
     return getActivityLevel(flares?.length ?? 0)

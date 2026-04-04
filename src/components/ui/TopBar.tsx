@@ -3,9 +3,10 @@ import { ScaleToggle } from './ScaleToggle'
 
 interface TopBarProps {
   onOpenAbout: () => void
+  onOpenExoplanets: () => void
 }
 
-export function TopBar({ onOpenAbout }: TopBarProps) {
+export function TopBar({ onOpenAbout, onOpenExoplanets }: TopBarProps) {
   return (
     <div
       style={{
@@ -41,6 +42,36 @@ export function TopBar({ onOpenAbout }: TopBarProps) {
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center', pointerEvents: 'auto' }}>
         <ScaleToggle />
+        <button
+          onClick={onOpenExoplanets}
+          style={{
+            height: 28,
+            borderRadius: 14,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: 11,
+            fontWeight: 600,
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '0 12px',
+            letterSpacing: 0.5,
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.12)'
+            e.currentTarget.style.color = '#fff'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(255,255,255,0.06)'
+            e.currentTarget.style.color = 'rgba(255,255,255,0.5)'
+          }}
+          title="Browse Exoplanet Archive"
+        >
+          Exoplanets
+        </button>
         <button
           onClick={onOpenAbout}
           style={{

@@ -45,6 +45,42 @@ export const SPACECRAFT: SpacecraftInfo[] = [
     color: '#44cc88',
     missionUrl: 'https://tess.mit.edu',
   },
+  {
+    id: 'parker',
+    name: 'Parker Solar Probe',
+    horizonsId: '-96',
+    launchDate: '2018-08-12',
+    description: 'The closest human-made object to the Sun. Making repeated close approaches to study the solar corona and solar wind.',
+    color: '#ff6600',
+    missionUrl: 'https://parkersolarprobe.jhuapl.edu',
+  },
+  {
+    id: 'juno',
+    name: 'Juno',
+    horizonsId: '-61',
+    launchDate: '2011-08-05',
+    description: 'Orbiting Jupiter to study its atmosphere, magnetic field, and interior structure. Extended mission includes flybys of Galilean moons.',
+    color: '#99cc33',
+    missionUrl: 'https://www.nasa.gov/mission_pages/juno/main/index.html',
+  },
+  {
+    id: 'newhorizons',
+    name: 'New Horizons',
+    horizonsId: '-98',
+    launchDate: '2006-01-19',
+    description: 'First spacecraft to fly by Pluto (2015) and Kuiper Belt object Arrokoth (2019). Now exploring the outer solar system.',
+    color: '#cc88ff',
+    missionUrl: 'https://www.nasa.gov/mission_pages/newhorizons/main/index.html',
+  },
+  {
+    id: 'osirisapex',
+    name: 'OSIRIS-APEX',
+    horizonsId: '-64',
+    launchDate: '2016-09-08',
+    description: 'Originally OSIRIS-REx, collected samples from asteroid Bennu. Now redirected as OSIRIS-APEX to study asteroid Apophis during its 2029 Earth flyby.',
+    color: '#ff4488',
+    missionUrl: 'https://science.nasa.gov/mission/osiris-rex/',
+  },
 ]
 
 export const SPACECRAFT_MAP = new Map(SPACECRAFT.map(s => [s.id, s]))

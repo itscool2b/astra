@@ -80,6 +80,27 @@ export interface DONKIFlare {
   sourceLocation: string
 }
 
+export interface DONKIStorm {
+  gstID: string
+  startTime: string
+  allKpIndex: { kpIndex: number; observedTime: string; source: string }[]
+  linkedEvents: { activityID: string }[] | null
+}
+
+export interface DONKISEP {
+  sepID: string
+  eventTime: string
+  instruments: { displayName: string }[]
+  linkedEvents: { activityID: string }[] | null
+}
+
+export interface DONKIIPS {
+  activityID: string
+  eventTime: string
+  location: string
+  instruments: { displayName: string }[]
+}
+
 export interface EONETEvent {
   id: string
   title: string
@@ -89,9 +110,28 @@ export interface EONETEvent {
   geometry: { date: string; type: string; coordinates: [number, number] }[]
 }
 
+export interface ExoplanetData {
+  pl_name: string
+  hostname: string
+  disc_year: number | null
+  discoverymethod: string | null
+  pl_orbper: number | null  // orbital period (days)
+  pl_rade: number | null    // radius (Earth radii)
+  pl_bmasse: number | null  // mass (Earth masses)
+  pl_eqt: number | null     // equilibrium temperature (K)
+  sy_dist: number | null    // distance (parsecs)
+  pl_orbsmax: number | null // semi-major axis (AU)
+  st_spectype: string | null // stellar spectral type
+  st_teff: number | null    // stellar temperature (K)
+}
+
 export interface SpacecraftPosition {
   x: number  // AU, heliocentric
   y: number
   z: number
+  vx: number // km/s
+  vy: number
+  vz: number
+  speed: number // km/s
   name: string
 }
