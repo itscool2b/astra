@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { Scene } from './components/canvas/Scene'
 import { useTimeLoop } from './lib/useTimeLoop'
 import { TopBar } from './components/ui/TopBar'
+import { TimeSlider } from './components/ui/TimeSlider'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +37,7 @@ export default function App() {
           </Suspense>
         </Canvas>
         <TopBar />
+        <TimeSlider />
       </div>
     </QueryClientProvider>
   )
