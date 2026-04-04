@@ -448,6 +448,7 @@ export function Spacecraft({ data }: SpacecraftProps) {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const { data: position } = useSpacecraftPosition(data.horizonsId)
 
@@ -598,23 +599,25 @@ export function Spacecraft({ data }: SpacecraftProps) {
       )}
 
       {/* Name label */}
-      <Html
-        position={[0, radius * 2.5, 0]}
-        center
-        style={{
-          color: 'white',
-          fontSize: '10px',
-          fontWeight: 500,
-          letterSpacing: '0.5px',
-          textShadow: '0 0 6px rgba(0,0,0,0.9)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          opacity: hovered || isSelected ? 1 : 0.5,
-          transition: 'opacity 0.2s',
-        }}
-      >
-        {data.name}
-      </Html>
+      {!overlayOpen && (
+        <Html
+          position={[0, radius * 2.5, 0]}
+          center
+          style={{
+            color: 'white',
+            fontSize: '10px',
+            fontWeight: 500,
+            letterSpacing: '0.5px',
+            textShadow: '0 0 6px rgba(0,0,0,0.9)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            opacity: hovered || isSelected ? 1 : 0.5,
+            transition: 'opacity 0.2s',
+          }}
+        >
+          {data.name}
+        </Html>
+      )}
     </group>
   )
 }

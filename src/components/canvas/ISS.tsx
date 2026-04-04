@@ -34,6 +34,7 @@ export function ISS({ radius }: ISSProps) {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const isSelected = selectedObject?.id === 'iss'
   const issSize = radius * 0.012
@@ -138,23 +139,25 @@ export function ISS({ radius }: ISSProps) {
       )}
 
       {/* Name label */}
-      <Html
-        position={[0, issSize * 4, 0]}
-        center
-        style={{
-          color: 'white',
-          fontSize: '9px',
-          fontWeight: 600,
-          letterSpacing: '0.5px',
-          textShadow: '0 0 6px rgba(0,0,0,0.9)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          opacity: hovered || isSelected ? 1 : 0.6,
-          transition: 'opacity 0.2s',
-        }}
-      >
-        ISS
-      </Html>
+      {!overlayOpen && (
+        <Html
+          position={[0, issSize * 4, 0]}
+          center
+          style={{
+            color: 'white',
+            fontSize: '9px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            textShadow: '0 0 6px rgba(0,0,0,0.9)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            opacity: hovered || isSelected ? 1 : 0.6,
+            transition: 'opacity 0.2s',
+          }}
+        >
+          ISS
+        </Html>
+      )}
     </group>
   )
 }

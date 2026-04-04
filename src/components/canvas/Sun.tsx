@@ -24,6 +24,7 @@ export function Sun() {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const radius = sunRadiusToScene(scaleMode)
   const isSelected = selectedObject?.id === 'sun'
@@ -128,23 +129,25 @@ export function Sun() {
       </mesh>
 
       {/* Name label */}
-      <Html
-        position={[0, radius * 1.8, 0]}
-        center
-        style={{
-          color: '#fffacd',
-          fontSize: '12px',
-          fontWeight: 600,
-          letterSpacing: '0.5px',
-          textShadow: '0 0 12px rgba(255,170,0,0.6)',
-          pointerEvents: 'none',
-          whiteSpace: 'nowrap',
-          opacity: hovered || isSelected ? 1 : 0.5,
-          transition: 'opacity 0.2s',
-        }}
-      >
-        Sun
-      </Html>
+      {!overlayOpen && (
+        <Html
+          position={[0, radius * 1.8, 0]}
+          center
+          style={{
+            color: '#fffacd',
+            fontSize: '12px',
+            fontWeight: 600,
+            letterSpacing: '0.5px',
+            textShadow: '0 0 12px rgba(255,170,0,0.6)',
+            pointerEvents: 'none',
+            whiteSpace: 'nowrap',
+            opacity: hovered || isSelected ? 1 : 0.5,
+            transition: 'opacity 0.2s',
+          }}
+        >
+          Sun
+        </Html>
+      )}
 
       {/* Corona glow */}
       <Billboard>

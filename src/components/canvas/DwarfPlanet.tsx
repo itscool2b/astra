@@ -22,6 +22,7 @@ export function DwarfPlanet({ data }: DwarfPlanetProps) {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const radius = Math.max(radiusToScene(data.physical.radius, scaleMode) * 0.7, 0.08)
   const isSelected = selectedObject?.id === data.id
@@ -77,7 +78,7 @@ export function DwarfPlanet({ data }: DwarfPlanetProps) {
           <sphereGeometry args={[radius, 32, 32]} />
           <meshStandardMaterial color={data.color} roughness={0.85} />
         </mesh>
-        {(hovered || isSelected) && (
+        {!overlayOpen && (hovered || isSelected) && (
           <Html position={[0, radius * 2, 0]} center style={{ color: 'white', fontSize: '10px', fontWeight: 500, textShadow: '0 0 6px rgba(0,0,0,0.9)', pointerEvents: 'none', whiteSpace: 'nowrap' }}>
             {data.name}
           </Html>

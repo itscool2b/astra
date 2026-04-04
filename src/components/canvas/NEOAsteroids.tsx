@@ -152,6 +152,7 @@ export function NEOAsteroids() {
   const { data: neoData } = useNEOFeed()
   const time = useStore((s) => s.time)
   const scaleMode = useStore((s) => s.scaleMode)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const parsedNEOs = useMemo(() => {
     if (!neoData?.near_earth_objects) return []
@@ -173,7 +174,7 @@ export function NEOAsteroids() {
         />
       ))}
       {/* Legend label */}
-      {parsedNEOs.length > 0 && (
+      {!overlayOpen && parsedNEOs.length > 0 && (
         <Html position={[0, 5, 0]} center style={{ pointerEvents: 'none', opacity: 0 }}>
           <span />
         </Html>

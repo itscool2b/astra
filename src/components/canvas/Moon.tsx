@@ -24,6 +24,7 @@ export function Moon({ data, parentPosition }: MoonProps) {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   // Moon radius -smaller scale factor than planets
   const radius = Math.max(radiusToScene(data.physical.radius, scaleMode) * 0.5, 0.05)
@@ -95,7 +96,7 @@ export function Moon({ data, parentPosition }: MoonProps) {
         <meshStandardMaterial color="#aaa" roughness={0.9} metalness={0.05} />
       </mesh>
 
-      {(hovered || isSelected) && (
+      {!overlayOpen && (hovered || isSelected) && (
         <Html
           position={[0, radius * 2, 0]}
           center

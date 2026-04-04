@@ -46,6 +46,7 @@ export function Planet({ data }: PlanetProps) {
   const flyTo = useStore((s) => s.flyTo)
   const selectedObject = useStore((s) => s.selectedObject)
   const setHoveredObject = useStore((s) => s.setHoveredObject)
+  const overlayOpen = useStore((s) => s.overlayOpen)
 
   const radius = radiusToScene(data.physical.radius, scaleMode)
   const isSelected = selectedObject?.id === data.id
@@ -217,23 +218,25 @@ export function Planet({ data }: PlanetProps) {
         {data.id === 'earth' && <ISS radius={radius} />}
 
         {/* Name label */}
-        <Html
-          position={[0, radius * 1.5, 0]}
-          center
-          style={{
-            color: 'white',
-            fontSize: '12px',
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            textShadow: '0 0 8px rgba(0,0,0,0.8)',
-            pointerEvents: 'none',
-            whiteSpace: 'nowrap',
-            opacity: hovered || isSelected ? 1 : 0.5,
-            transition: 'opacity 0.2s',
-          }}
-        >
-          {data.name}
-        </Html>
+        {!overlayOpen && (
+          <Html
+            position={[0, radius * 1.5, 0]}
+            center
+            style={{
+              color: 'white',
+              fontSize: '12px',
+              fontWeight: 600,
+              letterSpacing: '0.5px',
+              textShadow: '0 0 8px rgba(0,0,0,0.8)',
+              pointerEvents: 'none',
+              whiteSpace: 'nowrap',
+              opacity: hovered || isSelected ? 1 : 0.5,
+              transition: 'opacity 0.2s',
+            }}
+          >
+            {data.name}
+          </Html>
+        )}
       </group>
       {MOONS_BY_PARENT.get(data.id)?.map((moon) => (
         <Moon key={moon.id} data={moon} parentPosition={positionRef.current} />
