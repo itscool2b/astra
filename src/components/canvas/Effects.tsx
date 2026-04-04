@@ -13,13 +13,12 @@ import { useStore } from '../../store/useStore'
 export function Effects() {
   const quality = useStore((s) => s.quality)
 
-  // Skip heavy effects on low quality
   if (quality === 'low') {
     return (
       <EffectComposer>
         <Bloom
-          intensity={0.8}
-          luminanceThreshold={0.6}
+          intensity={0.6}
+          luminanceThreshold={0.7}
           luminanceSmoothing={0.5}
           mipmapBlur
         />
@@ -32,15 +31,15 @@ export function Effects() {
     return (
       <EffectComposer multisampling={0}>
         <Bloom
-          intensity={1.6}
-          luminanceThreshold={0.3}
+          intensity={1.0}
+          luminanceThreshold={0.5}
           luminanceSmoothing={0.6}
           mipmapBlur
-          radius={0.8}
+          radius={0.6}
         />
         <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
         <ChromaticAberration
-          offset={new THREE.Vector2(0.0008, 0.0008)}
+          offset={new THREE.Vector2(0.0005, 0.0005)}
           radialModulation
           modulationOffset={0.5}
           blendFunction={BlendFunction.NORMAL}
@@ -48,30 +47,31 @@ export function Effects() {
         <Noise
           premultiply
           blendFunction={BlendFunction.SOFT_LIGHT}
-          opacity={0.2}
+          opacity={0.12}
         />
         <Vignette
           offset={0.3}
-          darkness={0.75}
+          darkness={0.6}
           blendFunction={BlendFunction.NORMAL}
         />
       </EffectComposer>
     )
   }
 
+  // Medium quality
   return (
     <EffectComposer multisampling={0}>
       <Bloom
-        intensity={1.6}
-        luminanceThreshold={0.3}
+        intensity={1.0}
+        luminanceThreshold={0.5}
         luminanceSmoothing={0.6}
         mipmapBlur
-        radius={0.8}
+        radius={0.6}
       />
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
       <Vignette
         offset={0.3}
-        darkness={0.75}
+        darkness={0.6}
         blendFunction={BlendFunction.NORMAL}
       />
     </EffectComposer>

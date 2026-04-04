@@ -163,15 +163,17 @@ export function Sun() {
         </mesh>
       </Billboard>
 
-      {/* Point light */}
+      {/* Point light - primary illumination from the Sun */}
       <pointLight
         ref={lightRef}
         color="#fff5e6"
-        intensity={5}
+        intensity={3}
         distance={0}
         decay={0}
         castShadow={false}
       />
+      {/* Subtle ambient fill so dark sides aren't pure black */}
+      <ambientLight color="#1a1a2e" intensity={0.15} />
     </group>
   )
 }

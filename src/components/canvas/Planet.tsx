@@ -145,18 +145,9 @@ export function Planet({ data }: PlanetProps) {
             normalMap={normalLoaded ? normalTex : null}
             emissiveMap={nightLoaded ? nightTex : null}
             emissive={nightLoaded ? '#ffffff' : '#000000'}
-            emissiveIntensity={nightLoaded ? 0.6 : 0}
-            roughness={
-              data.type === 'terrestrial' ? 0.9 :
-              data.type === 'gas-giant' ? 0.4 :
-              data.type === 'ice-giant' ? 0.5 :
-              0.8
-            }
-            metalness={
-              data.type === 'gas-giant' ? 0.15 :
-              data.type === 'ice-giant' ? 0.1 :
-              0.1
-            }
+            emissiveIntensity={nightLoaded ? 0.4 : 0}
+            roughness={0.85}
+            metalness={0.05}
           />
         </mesh>
 
