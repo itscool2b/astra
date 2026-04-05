@@ -69,7 +69,7 @@ const DWARF_PLANET_VISUALS: Record<string, {
   },
 }
 
-function generateDwarfPlanetTexture(id: string, color: string): THREE.CanvasTexture {
+function generateDwarfPlanetTexture(id: string, _color: string): THREE.CanvasTexture {
   const canvas = document.createElement('canvas')
   canvas.width = 256
   canvas.height = 128
