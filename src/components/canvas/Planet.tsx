@@ -17,6 +17,23 @@ import { bodyPositions } from '../../lib/bodyPositions'
 
 const textureLoader = new THREE.TextureLoader()
 
+// Per-planet visual properties for realistic rendering
+const PLANET_VISUALS: Record<string, {
+  roughness: number
+  metalness: number
+  atmosphere?: { color: string; intensity: number; power: number; scale: number }
+  clouds?: { opacity: number; scale: number; rotationMultiplier: number; useAlphaMap: boolean }
+}> = {
+  mercury:  { roughness: 0.9,  metalness: 0.02 },
+  venus:    { roughness: 0.85, metalness: 0.02, atmosphere: { color: '#f5deb3', intensity: 2.0, power: 1.5, scale: 1.30 }, clouds: { opacity: 0.95, scale: 1.015, rotationMultiplier: 1.0, useAlphaMap: false } },
+  earth:    { roughness: 0.85, metalness: 0.05, atmosphere: { color: '#4a90d9', intensity: 1.5, power: 3.0, scale: 1.12 }, clouds: { opacity: 0.3, scale: 1.01, rotationMultiplier: 1.03, useAlphaMap: true } },
+  mars:     { roughness: 0.92, metalness: 0.02, atmosphere: { color: '#d4856a', intensity: 0.15, power: 5.0, scale: 1.02 } },
+  jupiter:  { roughness: 0.35, metalness: 0.0,  atmosphere: { color: '#d4a56a', intensity: 1.0, power: 2.0, scale: 1.20 } },
+  saturn:   { roughness: 0.4,  metalness: 0.0,  atmosphere: { color: '#e8d5a0', intensity: 0.8, power: 2.5, scale: 1.18 } },
+  uranus:   { roughness: 0.3,  metalness: 0.0,  atmosphere: { color: '#a8dce0', intensity: 0.7, power: 2.5, scale: 1.15 } },
+  neptune:  { roughness: 0.35, metalness: 0.0,  atmosphere: { color: '#4169e1', intensity: 0.8, power: 2.5, scale: 1.15 } },
+}
+
 function useTextureAsync(path: string | undefined): { texture: THREE.Texture | null; loaded: boolean } {
   const [loaded, setLoaded] = useState(false)
   const texture = useMemo(() => {
@@ -92,9 +109,10 @@ export function Planet({ data }: PlanetProps) {
       meshRef.current.rotation.y = rotAngle * sign
     }
 
-    // Rotate Earth's cloud layer slightly faster for visual effect
+    // Rotate cloud layer (per-planet multiplier)
     if (cloudRef.current && meshRef.current) {
-      cloudRef.current.rotation.y = meshRef.current.rotation.y * 1.03
+      const cloudMultiplier = PLANET_VISUALS[data.id]?.clouds?.rotationMultiplier ?? 1.0
+      cloudRef.current.rotation.y = meshRef.current.rotation.y * cloudMultiplier
     }
   })
 
@@ -140,56 +158,44 @@ export function Planet({ data }: PlanetProps) {
         >
           <sphereGeometry args={[radius, 64, 64]} />
           <meshStandardMaterial
+            key={`${data.id}-${albedoLoaded}-${normalLoaded}-${nightLoaded}`}
             color={materialColor}
             map={albedoLoaded ? albedoTex : null}
             normalMap={normalLoaded ? normalTex : null}
             emissiveMap={nightLoaded ? nightTex : null}
             emissive={nightLoaded ? '#ffffff' : '#000000'}
             emissiveIntensity={nightLoaded ? 0.4 : 0}
-            roughness={0.85}
-            metalness={0.05}
+            roughness={PLANET_VISUALS[data.id]?.roughness ?? 0.85}
+            metalness={PLANET_VISUALS[data.id]?.metalness ?? 0.05}
           />
         </mesh>
 
-        {/* Earth cloud layer */}
-        {data.id === 'earth' && cloudsTex && (
+        {/* Cloud layer (Earth, Venus) */}
+        {cloudsTex && PLANET_VISUALS[data.id]?.clouds && (
           <mesh
             ref={cloudRef}
             rotation={[data.physical.axialTilt * (Math.PI / 180), 0, 0]}
           >
-            <sphereGeometry args={[radius * 1.01, 64, 64]} />
+            <sphereGeometry args={[radius * (PLANET_VISUALS[data.id].clouds!.scale), 64, 64]} />
             <meshStandardMaterial
+              key={`clouds-${data.id}-${!!cloudsTex}`}
               map={cloudsTex}
+              alphaMap={PLANET_VISUALS[data.id].clouds!.useAlphaMap ? cloudsTex : null}
               transparent
-              opacity={0.35}
+              opacity={PLANET_VISUALS[data.id].clouds!.opacity}
               depthWrite={false}
             />
           </mesh>
         )}
 
         {/* Atmosphere */}
-        {data.atmosphere && (
+        {data.atmosphere && PLANET_VISUALS[data.id]?.atmosphere && (
           <Atmosphere
             radius={radius}
-            color={
-              data.id === 'earth' ? '#4a90d9' :
-              data.id === 'venus' ? '#e8b86a' :
-              data.id === 'mars' ? '#c47040' :
-              data.id === 'jupiter' || data.id === 'saturn' ? '#c4a882' :
-              data.id === 'uranus' ? '#7ec8e3' :
-              data.id === 'neptune' ? '#3f54ba' :
-              '#aaaaaa'
-            }
-            intensity={data.id === 'earth' ? 1.5 : data.id === 'venus' ? 1.5 : 0.6}
-            power={data.id === 'venus' ? 2.0 : 3.0}
-            scale={
-              data.id === 'venus' ? 1.25 :
-              data.id === 'earth' ? 1.12 :
-              data.id === 'mars' ? 1.05 :
-              data.id === 'jupiter' || data.id === 'saturn' ? 1.15 :
-              data.id === 'uranus' || data.id === 'neptune' ? 1.15 :
-              1.12
-            }
+            color={PLANET_VISUALS[data.id].atmosphere!.color}
+            intensity={PLANET_VISUALS[data.id].atmosphere!.intensity}
+            power={PLANET_VISUALS[data.id].atmosphere!.power}
+            scale={PLANET_VISUALS[data.id].atmosphere!.scale}
           />
         )}
 
@@ -199,8 +205,9 @@ export function Planet({ data }: PlanetProps) {
             innerRadius={radius * data.ringInnerRadius}
             outerRadius={radius * data.ringOuterRadius}
             color={data.color}
-            opacity={data.id === 'saturn' ? 0.6 : 0.2}
+            opacity={data.id === 'saturn' ? 0.8 : 0.2}
             planetId={data.id}
+            ringAlphaTexturePath={data.textureSet.ringAlpha}
           />
         )}
 

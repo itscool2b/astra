@@ -7,6 +7,7 @@ import { useStore, type CelestialTarget } from '../../store/useStore'
 import { useSpacecraftPosition } from '../../api/hooks'
 import { auToScene } from '../../lib/scales'
 import { bodyPositions } from '../../lib/bodyPositions'
+import { PLANETS } from '../../data/planets'
 
 /* ------------------------------------------------------------------ */
 /*  Per-spacecraft procedural models                                   */
@@ -484,6 +485,23 @@ export function Spacecraft({ data }: SpacecraftProps) {
       auToScene(position.z, scaleMode), // ecliptic Z -> scene Y
       auToScene(position.y, scaleMode)  // ecliptic Y -> scene Z
     )
+
+    // Push spacecraft outside any planet it overlaps with (e.g. TESS inside exaggerated Earth)
+    for (const planet of PLANETS) {
+      const planetPos = bodyPositions.get(planet.id)
+      if (!planetPos) continue
+      const planetRadius = bodyPositions.getRadius(planet.id)
+      const dist = groupRef.current.position.distanceTo(planetPos)
+      if (dist < planetRadius * 1.5) {
+        const dir = groupRef.current.position.clone().sub(planetPos)
+        if (dir.length() < 0.001) dir.set(1, 0, 0)
+        dir.normalize()
+        groupRef.current.position.copy(planetPos).addScaledVector(dir, planetRadius * 1.6)
+        // Scale spacecraft to be small relative to the planet
+        const scaleVal = planetRadius * 0.08
+        groupRef.current.scale.setScalar(scaleVal / radius)
+      }
+    }
 
     bodyPositions.set(data.id, groupRef.current.position, radius)
 
